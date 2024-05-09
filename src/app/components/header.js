@@ -12,7 +12,7 @@ export default function Header() {
   const connected = !ready || (ready && wallets.length > 0);
 
   return (
-    <Flex justify="between" direction="row" mt="2" mb="8" align="center">
+    <Flex justify="between" direction="row" mt="2" mb="6" align="center">
       <Flex direction="row" align="center">
         <Link href="/">
           <Heading weight="medium">yield.🏠</Heading>

@@ -40,8 +40,8 @@ export default function About() {
           to create a wallet through your social network account.
         </Text>
         <Text>
-          yield.house ha a 0% fee policy, we don't charge any fee for using our
-          platform.
+          yield.house ha a 0% fee policy, we don&apos;t charge any fee for using
+          our platform.
         </Text>
       </Flex>
     </Flex>
