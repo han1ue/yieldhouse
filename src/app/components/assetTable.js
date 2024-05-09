@@ -10,6 +10,7 @@ import {
   Box,
 } from "@radix-ui/themes";
 import data from "/public/data.json";
+import Image from "next/image";
 
 export default function AssetTable({
   selectedChains,
@@ -31,8 +32,7 @@ export default function AssetTable({
       // Check if the asset contains the search query in its name or chain
       const searchMatch =
         searchQuery === "" ||
-        asset.asset.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        asset.chain.toLowerCase().includes(searchQuery.toLowerCase());
+        asset.asset.toLowerCase().includes(searchQuery.toLowerCase());
       return chainMatch && typeMatch && searchMatch;
     });
 
@@ -43,7 +43,7 @@ export default function AssetTable({
     <Table.Root variant="ghost" size="1">
       <Table.Header>
         <Table.Row>
-          <Table.ColumnHeaderCell>Asset (Chain)</Table.ColumnHeaderCell>
+          <Table.ColumnHeaderCell>Asset</Table.ColumnHeaderCell>
           <Table.ColumnHeaderCell>APY</Table.ColumnHeaderCell>
           <Table.ColumnHeaderCell>TVL</Table.ColumnHeaderCell>
           <Table.ColumnHeaderCell>Type</Table.ColumnHeaderCell>
@@ -56,7 +56,19 @@ export default function AssetTable({
         {tableData.map((row, index) => (
           <Table.Row key={index} align="center">
             <Table.RowHeaderCell>
-              {row.asset + " (" + row.chain + ")"}
+              <Flex direction="row" align="center">
+                <Box>
+                  <Image
+                    src={"/images/assets/" + row.asset.toLowerCase() + ".svg"}
+                    width={24}
+                    height={24}
+                  />
+                </Box>
+                <Text size="3" weight="medium" ml="2" trim="start">
+                  {row.asset}
+                </Text>
+              </Flex>
+              <Text size="1"> {row.application + " • " + row.chain} </Text>
             </Table.RowHeaderCell>
             <Table.Cell>{row.apy * 100 + "%"}</Table.Cell>
             <Table.Cell>{row.tvl + " $"}</Table.Cell>

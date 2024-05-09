@@ -81,7 +81,7 @@ export default function Home() {
               variant={selectedAssetTypes.includes("LP") ? "solid" : "soft"}
               onClick={() => handleClickAssetType("LP")}
             >
-              LPs
+              LP
             </Button>
             <Button
               size="1"
@@ -89,7 +89,7 @@ export default function Home() {
               variant={selectedAssetTypes.includes("LST") ? "solid" : "soft"}
               onClick={() => handleClickAssetType("LST")}
             >
-              LSDs
+              LST
             </Button>
             <Button
               size="1"
@@ -97,7 +97,7 @@ export default function Home() {
               variant={selectedAssetTypes.includes("LRT") ? "solid" : "soft"}
               onClick={() => handleClickAssetType("LRT")}
             >
-              LRTs
+              LRT
             </Button>
           </Grid>
         </Flex>

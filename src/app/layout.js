@@ -13,7 +13,7 @@ const inter = Inter({ subsets: ["latin"] });
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <title>yield.🏠</title>
+      <title>• 🏠</title>
       <body className={inter.className}>
         <PrivyProvider appId="clvyg5hc308tixi9m43pjngmw">
           <Theme
