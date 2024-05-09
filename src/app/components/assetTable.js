@@ -40,7 +40,7 @@ export default function AssetTable({
   }, [selectedChains, selectedAssetTypes, searchQuery]);
 
   return (
-    <Table.Root>
+    <Table.Root variant="ghost" size="1">
       <Table.Header>
         <Table.Row>
           <Table.ColumnHeaderCell>Asset (Chain)</Table.ColumnHeaderCell>
@@ -54,7 +54,7 @@ export default function AssetTable({
 
       <Table.Body>
         {tableData.map((row, index) => (
-          <Table.Row key={index}>
+          <Table.Row key={index} align="center">
             <Table.RowHeaderCell>
               {row.asset + " (" + row.chain + ")"}
             </Table.RowHeaderCell>
@@ -62,7 +62,9 @@ export default function AssetTable({
             <Table.Cell>{row.tvl + " $"}</Table.Cell>
             <Table.Cell>{row.type}</Table.Cell>
             <Table.Cell>{row.risk}</Table.Cell>
-            <Table.Cell>Deposit</Table.Cell>
+            <Table.Cell>
+              <Button variant="soft">Deposit</Button>
+            </Table.Cell>
           </Table.Row>
         ))}
       </Table.Body>
