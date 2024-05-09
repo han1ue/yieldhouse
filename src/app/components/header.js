@@ -1,5 +1,6 @@
 import { Flex, Text, Heading, Button } from "@radix-ui/themes";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
+import Link from "next/link";
 
 export default function Header() {
   const { connectOrCreateWallet, logout } = usePrivy();
@@ -11,9 +12,11 @@ export default function Header() {
   const connected = !ready || (ready && wallets.length > 0);
 
   return (
-    <Flex justify="between" direction="row" my="2" align="center">
+    <Flex justify="between" direction="row" mt="2" mb="8" align="center">
       <Flex direction="row" align="center">
-        <Heading weight="medium">yield.🏠</Heading>
+        <Link href="/">
+          <Heading weight="medium">yield.🏠</Heading>
+        </Link>
         <Flex direction="row" mx="5" gapX="2">
           {connected && (
             <Button size="1" variant="soft">
@@ -23,9 +26,11 @@ export default function Header() {
           <Button size="1" variant="soft">
             Twitter
           </Button>
-          <Button size="1" variant="soft">
-            About
-          </Button>
+          <Link href="/about">
+            <Button size="1" variant="soft">
+              About
+            </Button>
+          </Link>
         </Flex>
       </Flex>
       <Button

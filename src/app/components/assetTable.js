@@ -11,11 +11,15 @@ import {
 } from "@radix-ui/themes";
 import data from "/public/data.json";
 
-export default function AssetTable({ selectedChains, selectedAssetTypes }) {
+export default function AssetTable({
+  selectedChains,
+  selectedAssetTypes,
+  searchQuery,
+}) {
   const [tableData, setTableData] = useState([]);
 
   useEffect(() => {
-    // Filter data based on selected chains and asset types
+    // Filter data based on selected chains, asset types, and search query
     const filteredData = data.filter((asset) => {
       // Check if the asset's chain is included in selected chains
       const chainMatch =
@@ -24,11 +28,16 @@ export default function AssetTable({ selectedChains, selectedAssetTypes }) {
       const typeMatch =
         selectedAssetTypes.length === 0 ||
         selectedAssetTypes.includes(asset.type);
-      return chainMatch && typeMatch;
+      // Check if the asset contains the search query in its name or chain
+      const searchMatch =
+        searchQuery === "" ||
+        asset.asset.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        asset.chain.toLowerCase().includes(searchQuery.toLowerCase());
+      return chainMatch && typeMatch && searchMatch;
     });
 
     setTableData(filteredData);
-  }, [selectedChains, selectedAssetTypes]);
+  }, [selectedChains, selectedAssetTypes, searchQuery]);
 
   return (
     <Table.Root>

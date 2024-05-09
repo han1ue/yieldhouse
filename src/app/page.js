@@ -23,6 +23,7 @@ import AssetTable from "./components/assetTable";
 export default function Home() {
   const [selectedChains, setSelectedChains] = useState([]);
   const [selectedAssetTypes, setSelectedAssetTypes] = useState([]);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleClickChain = (chain) => {
     if (selectedChains.includes(chain)) {
@@ -42,10 +43,11 @@ export default function Home() {
     }
   };
   return (
-    <Flex direction="column" gap="6" mt="8">
+    <Flex direction="column" gap="6">
       <Flex direction="row" justify="between">
         <Flex direction="column" gap="2" width="300px">
           <TextField.Root
+            onChange={(e) => setSearchQuery(e.target.value)}
             variant="surface"
             radius="large"
             placeholder="Search for an asset"
@@ -135,6 +137,7 @@ export default function Home() {
       <AssetTable
         selectedChains={selectedChains}
         selectedAssetTypes={selectedAssetTypes}
+        searchQuery={searchQuery}
       />
     </Flex>
   );
