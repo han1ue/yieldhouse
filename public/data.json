@@ -1,0 +1,10 @@
+[
+  {
+    "asset": "ETH",
+    "chain": "Ethereum",
+    "apy": 0.2113,
+    "tvl": 73000,
+    "type": "LP",
+    "risk": 3
+  }
+]

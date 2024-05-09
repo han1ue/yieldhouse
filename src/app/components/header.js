@@ -1,17 +1,21 @@
 import { Flex, Text, Heading, Button } from "@radix-ui/themes";
-import { usePrivy } from "@privy-io/react-auth";
+import { usePrivy, useWallets } from "@privy-io/react-auth";
 
 export default function Header() {
-  const { ready, authenticated, login, logout } = usePrivy();
+  const { connectOrCreateWallet, logout } = usePrivy();
+  const { ready, wallets } = useWallets();
+
+  console.log("wallets", wallets);
+
   // Disable login when Privy is not ready or the user is already authenticated
-  const loggedIn = !ready || (ready && authenticated);
+  const connected = !ready || (ready && wallets.length > 0);
 
   return (
     <Flex justify="between" direction="row" my="2" align="center">
       <Flex direction="row" align="center">
         <Heading weight="medium">yield.🏠</Heading>
         <Flex direction="row" mx="5" gapX="2">
-          {loggedIn && (
+          {connected && (
             <Button size="1" variant="soft">
               Dashboard
             </Button>
@@ -25,10 +29,10 @@ export default function Header() {
         </Flex>
       </Flex>
       <Button
-        variant={loggedIn ? "outline" : "soft"}
-        onClick={loggedIn ? logout : login}
+        variant={connected ? "outline" : "soft"}
+        onClick={connected ? wallets[0]?.disconnect : connectOrCreateWallet}
       >
-        {loggedIn ? "disconnect" : "connect"}
+        {connected ? "disconnect" : "connect"}
       </Button>
     </Flex>
   );
