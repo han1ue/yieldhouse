@@ -1,5 +1,6 @@
 [
   {
+    "id": 0,
     "asset": "ETH",
     "chain": "Ethereum",
     "protocol": "AAVE",
@@ -10,6 +11,7 @@
     "risk": 2
   },
   {
+    "id": 1,
     "asset": "ETH",
     "chain": "Arbitrum",
     "protocol": "AAVE",

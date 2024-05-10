@@ -13,6 +13,7 @@ import data from "/public/data.json";
 import Image from "next/image";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+import Link from "next/link";
 
 export default function AssetTable({
   selectedChains,
@@ -109,7 +110,9 @@ export default function AssetTable({
               </div>
             </Table.Cell>
             <Table.Cell>
-              <Button variant="soft">Deposit</Button>
+              <Link href={"/" + row.id}>
+                <Button variant="soft">Deposit</Button>
+              </Link>
             </Table.Cell>
           </Table.Row>
         ))}
