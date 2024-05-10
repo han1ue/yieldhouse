@@ -9,6 +9,7 @@ import {
   TextField,
   Table,
   Box,
+  AlertDialog,
 } from "@radix-ui/themes";
 import { useState } from "react";
 import Image from "next/image";
@@ -18,12 +19,15 @@ import {
   SunIcon,
   MagnifyingGlassIcon,
 } from "@radix-ui/react-icons";
+import { useMediaQuery } from "react-responsive";
+import ChainSelectionGrid from "./components/chainSelectionGrid";
 import AssetTable from "./components/assetTable";
 
 export default function Home() {
   const [selectedChains, setSelectedChains] = useState([]);
   const [selectedAssetTypes, setSelectedAssetTypes] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
+  const isMobile = useMediaQuery({ maxWidth: 640 }); // Adjust the max width as needed
 
   const handleClickChain = (chain) => {
     if (selectedChains.includes(chain)) {
@@ -50,7 +54,7 @@ export default function Home() {
             onChange={(e) => setSearchQuery(e.target.value)}
             variant="surface"
             radius="large"
-            placeholder="Search for an asset"
+            placeholder="Search for an asset or protocol"
           >
             <TextField.Slot>
               <MagnifyingGlassIcon height="16" width="16" />
@@ -101,38 +105,33 @@ export default function Home() {
             </Button>
           </Grid>
         </Flex>
-        <Grid columns="3" gap="2">
-          <Box align="center">
-            <IconButton
-              color={!selectedChains.includes("Ethereum") && "gray"}
-              variant="surface"
-              size="3"
-              onClick={() => handleClickChain("Ethereum")}
-            >
-              <Image src="/images/chains/ethereum.png" width={25} height={25} />
-            </IconButton>
-          </Box>
-          <Box align="center">
-            <IconButton
-              color={!selectedChains.includes("Arbitrum") && "gray"}
-              variant="outline"
-              size="3"
-              onClick={() => handleClickChain("Arbitrum")}
-            >
-              <Image src="/images/chains/arbitrum.png" width={25} height={25} />
-            </IconButton>
-          </Box>
-          <Box align="center">
-            <IconButton
-              color={!selectedChains.includes("Base") && "gray"}
-              variant="outline"
-              size="3"
-              onClick={() => handleClickChain("Base")}
-            >
-              <Image src="/images/chains/base.png" width={25} height={25} />
-            </IconButton>
-          </Box>
-        </Grid>
+        {isMobile ? (
+          <AlertDialog.Root>
+            <AlertDialog.Trigger>
+              <Button variant="classic">Chains</Button>
+            </AlertDialog.Trigger>
+            <AlertDialog.Content maxWidth="450px">
+              <AlertDialog.Title>Select Chains</AlertDialog.Title>
+              <Box m="8">
+                <ChainSelectionGrid
+                  selectedChains={selectedChains}
+                  handleClickChain={handleClickChain}
+                />
+              </Box>
+
+              <Flex gap="3" mt="4" justify="end">
+                <AlertDialog.Action>
+                  <Button variant="classic">Done</Button>
+                </AlertDialog.Action>
+              </Flex>
+            </AlertDialog.Content>
+          </AlertDialog.Root>
+        ) : (
+          <ChainSelectionGrid
+            selectedChains={selectedChains}
+            handleClickChain={handleClickChain}
+          />
+        )}
       </Flex>
       <AssetTable
         selectedChains={selectedChains}

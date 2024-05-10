@@ -2,17 +2,17 @@
   {
     "asset": "ETH",
     "chain": "Ethereum",
-    "application": "AAVE",
+    "protocol": "AAVE",
     "apy": 0.2113,
     "tvl": 73000,
     "type": "LP",
     "baseAsset": "USDT",
-    "risk": 3
+    "risk": 2
   },
   {
     "asset": "ETH",
     "chain": "Arbitrum",
-    "application": "AAVE",
+    "protocol": "AAVE",
     "apy": 0.172,
     "tvl": 1200,
     "type": "LP",

@@ -11,6 +11,8 @@ import {
 } from "@radix-ui/themes";
 import data from "/public/data.json";
 import Image from "next/image";
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 
 export default function AssetTable({
   selectedChains,
@@ -32,12 +34,18 @@ export default function AssetTable({
       // Check if the asset contains the search query in its name or chain
       const searchMatch =
         searchQuery === "" ||
-        asset.asset.toLowerCase().includes(searchQuery.toLowerCase());
+        asset.asset.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        asset.protocol.toLowerCase().includes(searchQuery.toLowerCase());
       return chainMatch && typeMatch && searchMatch;
     });
 
     setTableData(filteredData);
   }, [selectedChains, selectedAssetTypes, searchQuery]);
+
+  function getColorForRisk(risk) {
+    const hue = (1 - risk / 10) * 120; // Calculate hue value for the HSL color space
+    return `hsl(${hue}, 100%, 40%)`; // Generate color based on hue, saturation, and lightness
+  }
 
   return (
     <Table.Root variant="ghost" size="1">
@@ -64,16 +72,42 @@ export default function AssetTable({
                     height={24}
                   />
                 </Box>
-                <Text size="3" weight="medium" ml="2" trim="start">
-                  {row.asset}
-                </Text>
+                <Flex direction="roq" align="start">
+                  <Text size="3" weight="medium" ml="2" trim="start">
+                    {row.asset}
+                  </Text>
+                  {row.type == "LP" && (
+                    <Text size="1" color="gray" ml="1">
+                      {"/ " + row.baseAsset}
+                    </Text>
+                  )}
+                </Flex>
               </Flex>
-              <Text size="1"> {row.application + " • " + row.chain} </Text>
+              <Text size="1" weight="light">
+                {row.protocol + " • " + row.chain}{" "}
+              </Text>
             </Table.RowHeaderCell>
             <Table.Cell>{row.apy * 100 + "%"}</Table.Cell>
             <Table.Cell>{row.tvl + " $"}</Table.Cell>
             <Table.Cell>{row.type}</Table.Cell>
-            <Table.Cell>{row.risk}</Table.Cell>
+            <Table.Cell>
+              <div style={{ width: 32, height: 32 }}>
+                <CircularProgressbar
+                  value={row.risk}
+                  strokeWidth={10}
+                  maxValue={10}
+                  text={row.risk}
+                  styles={buildStyles({
+                    // Text size
+                    textSize: "48px",
+
+                    // Colors
+                    pathColor: getColorForRisk(row.risk),
+                    textColor: getColorForRisk(row.risk),
+                  })}
+                />
+              </div>
+            </Table.Cell>
             <Table.Cell>
               <Button variant="soft">Deposit</Button>
             </Table.Cell>

@@ -18,7 +18,9 @@ import {
   ImageIcon,
   SunIcon,
   MagnifyingGlassIcon,
+  TwitterLogoIcon,
 } from "@radix-ui/react-icons";
+import Link from "next/link";
 
 export default function About() {
   return (
@@ -40,9 +42,15 @@ export default function About() {
           to create a wallet through your social network account.
         </Text>
         <Text>
-          yield.house ha a 0% fee policy, we don&apos;t charge any fee for using
-          our platform.
+          yield.house has a 0% fee policy, we don&apos;t charge any fee for
+          using our platform.
         </Text>
+      </Flex>
+
+      <Flex direction="row" justify="center" mt="4" width="full">
+        <Link href="https://twitter.com/yieldhouse">
+          <TwitterLogoIcon width="32" height="32" />
+        </Link>
       </Flex>
     </Flex>
   );

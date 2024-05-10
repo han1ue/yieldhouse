@@ -14,18 +14,20 @@ export default function Header() {
   return (
     <Flex justify="between" direction="row" mt="2" mb="6" align="center">
       <Flex direction="row" align="center">
-        <Link href="/">
-          <Heading weight="medium">yield.🏠</Heading>
-        </Link>
+        <Heading weight="medium">yield.🏠</Heading>
+
         <Flex direction="row" mx="5" gapX="2">
+          <Link href="/">
+            <Button size="1" variant="soft">
+              Yields
+            </Button>
+          </Link>
           {connected && (
             <Button size="1" variant="soft">
               Dashboard
             </Button>
           )}
-          <Button size="1" variant="soft">
-            Twitter
-          </Button>
+
           <Link href="/about">
             <Button size="1" variant="soft">
               About
