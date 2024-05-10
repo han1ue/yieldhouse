@@ -9,7 +9,7 @@ import {
   Table,
   Box,
 } from "@radix-ui/themes";
-import data from "/public/data.json";
+import data from "/public/mockData.json";
 import Image from "next/image";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";

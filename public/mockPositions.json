@@ -1,0 +1,11 @@
+[
+  {
+    "id": "1",
+    "asset": "ETH",
+    "chain": "Ethereum",
+    "protocol": "AAVE",
+    "apy": 200,
+    "value": 1000,
+    "profit": 2000
+  }
+]

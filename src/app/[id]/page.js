@@ -12,7 +12,7 @@ import {
   Box,
 } from "@radix-ui/themes";
 
-import data from "/public/data.json";
+import data from "/public/mockData.json";
 
 export default function YieldPage({ params }) {
   const yieldDetails = data[params.id];

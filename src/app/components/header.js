@@ -23,9 +23,11 @@ export default function Header() {
             </Button>
           </Link>
           {connected && (
-            <Button size="1" variant="soft">
-              Dashboard
-            </Button>
+            <Link href="/dashboard">
+              <Button size="1" variant="soft">
+                Dashboard
+              </Button>
+            </Link>
           )}
 
           <Link href="/about">
