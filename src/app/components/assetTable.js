@@ -110,7 +110,7 @@ export default function AssetTable({
               </div>
             </Table.Cell>
             <Table.Cell>
-              <Link href={"/" + row.id}>
+              <Link href={"/details/" + index}>
                 <Button variant="soft">Deposit</Button>
               </Link>
             </Table.Cell>

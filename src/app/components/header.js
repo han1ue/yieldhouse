@@ -14,8 +14,9 @@ export default function Header() {
   return (
     <Flex justify="between" direction="row" mt="2" mb="6" align="center">
       <Flex direction="row" align="center">
-        <Heading weight="medium">yield.🏠</Heading>
-
+        <Link href="/">
+          <Heading weight="medium">yield.🏠</Heading>
+        </Link>
         <Flex direction="row" mx="5" gapX="2">
           <Link href="/">
             <Button size="1" variant="soft">

@@ -30,7 +30,7 @@ export default function Dashboard() {
       <Grid columns="4" gap="2">
         {data.map((position) => (
           <Card asChild>
-            <a href={"/" + position.id}>
+            <a href={"/details/" + position.id}>
               <Flex direction="column" align="center" gap="1">
                 <Flex
                   direction="row"
@@ -63,29 +63,23 @@ export default function Dashboard() {
                 <Flex
                   direction="column"
                   justify="center"
-                  width="80%"
+                  width="70%"
                   mt="2"
                   gap="2"
                 >
                   <Flex direction="row" justify="between">
-                    <Flex direction="column">
-                      <Text size="1">APY</Text>
-                      <Text size="2" weight="medium">
-                        {position.apy}
-                      </Text>
-                    </Flex>
                     <Flex direction="column">
                       <Text size="1">Value</Text>
                       <Text size="2" weight="medium">
                         {position.value}
                       </Text>
                     </Flex>
-                  </Flex>
-                  <Flex direction="column">
-                    <Text size="1">Profit</Text>
-                    <Text size="2" weight="medium">
-                      {position.profit}
-                    </Text>
+                    <Flex direction="column">
+                      <Text size="1">Profit</Text>
+                      <Text size="2" weight="medium">
+                        {position.profit}
+                      </Text>
+                    </Flex>
                   </Flex>
                 </Flex>
               </Flex>

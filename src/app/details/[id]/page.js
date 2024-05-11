@@ -19,7 +19,7 @@ export default function YieldPage({ params }) {
   return (
     <>
       {yieldDetails ? (
-        <Flex direction="column" gap="4">
+        <Flex direction="row" justify="center" gap="4">
           <div>ID: {params.id}</div>
           <div>Asset: {yieldDetails.asset}</div>
         </Flex>
