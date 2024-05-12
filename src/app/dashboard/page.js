@@ -41,10 +41,10 @@ export default function Dashboard() {
                 >
                   <Image
                     src={
-                      "/images/chains/" + position.chain.toLowerCase() + ".png"
+                      "/images/assets/" + position.asset.toLowerCase() + ".png"
                     }
-                    width={20}
-                    height={20}
+                    width={25}
+                    height={25}
                   />
                   <Separator orientation="vertical" size="1" />
                   <Image

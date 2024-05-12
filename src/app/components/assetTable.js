@@ -11,9 +11,9 @@ import {
 } from "@radix-ui/themes";
 import data from "/public/mockData.json";
 import Image from "next/image";
-import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import Link from "next/link";
+import RiskIndicator from "./riskIndicator";
 
 export default function AssetTable({
   selectedChains,
@@ -42,11 +42,6 @@ export default function AssetTable({
 
     setTableData(filteredData);
   }, [selectedChains, selectedAssetTypes, searchQuery]);
-
-  function getColorForRisk(risk) {
-    const hue = (1 - risk / 10) * 120; // Calculate hue value for the HSL color space
-    return `hsl(${hue}, 100%, 40%)`; // Generate color based on hue, saturation, and lightness
-  }
 
   return (
     <Table.Root variant="ghost" size="1">
@@ -92,22 +87,7 @@ export default function AssetTable({
             <Table.Cell>{row.tvl + " $"}</Table.Cell>
             <Table.Cell>{row.type}</Table.Cell>
             <Table.Cell>
-              <div style={{ width: 32, height: 32 }}>
-                <CircularProgressbar
-                  value={row.risk}
-                  strokeWidth={10}
-                  maxValue={10}
-                  text={row.risk}
-                  styles={buildStyles({
-                    // Text size
-                    textSize: "48px",
-
-                    // Colors
-                    pathColor: getColorForRisk(row.risk),
-                    textColor: getColorForRisk(row.risk),
-                  })}
-                />
-              </div>
+              <RiskIndicator risk={row.risk} size={32} textSize={48} />
             </Table.Cell>
             <Table.Cell>
               <Link href={"/details/" + index}>
