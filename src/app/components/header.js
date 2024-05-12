@@ -18,11 +18,6 @@ export default function Header() {
           <Heading weight="medium">yield.🏠</Heading>
         </Link>
         <Flex direction="row" mx="5" gapX="2">
-          <Link href="/">
-            <Button size="1" variant="soft">
-              Yields
-            </Button>
-          </Link>
           {connected && (
             <Link href="/dashboard">
               <Button size="1" variant="soft">
@@ -30,6 +25,12 @@ export default function Header() {
               </Button>
             </Link>
           )}
+
+          <Link href="/">
+            <Button size="1" variant="soft">
+              Yields
+            </Button>
+          </Link>
 
           <Link href="/about">
             <Button size="1" variant="soft">

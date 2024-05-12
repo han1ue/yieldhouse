@@ -49,7 +49,7 @@ export default function YieldPage({ params }) {
             </Flex>
             <Separator size="3" orientation="vertical" />
             <Flex justify="center" align="center">
-              <RiskIndicator risk={yieldDetails.risk} size={64} textSize={34} />
+              <RiskIndicator risk={yieldDetails.risk} size={58} textSize={38} />
             </Flex>
           </Flex>
           <Flex
