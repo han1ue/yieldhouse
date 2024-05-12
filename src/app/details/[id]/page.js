@@ -31,7 +31,7 @@ export default function YieldPage({ params }) {
             <Flex direction="row" justify="center" align="center" gap="3">
               <Image
                 src={
-                  "/images/assets/" + yieldDetails.asset.toLowerCase() + ".png"
+                  "/images/assets/" + yieldDetails.asset.toLowerCase() + ".svg"
                 }
                 width={25}
                 height={25}
