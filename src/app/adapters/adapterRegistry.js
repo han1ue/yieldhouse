@@ -1,4 +1,4 @@
-import { deposit, depositable, withdraw, withdrawable } from "./aave";
+import { deposit, depositable, withdraw, withdrawable } from "./aavev3";
 
 // Adapter Registry
 // This is a registry of all the adapters that are available in the app.
@@ -7,7 +7,7 @@ import { deposit, depositable, withdraw, withdrawable } from "./aave";
 // Claim/claimable functions are required for non rebasing yields.
 
 export const adapterRegistry = {
-  aave: {
+  aavev3: {
     deposit,
     depositable,
     withdraw,

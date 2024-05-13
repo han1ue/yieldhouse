@@ -1,13 +1,23 @@
-export async function deposit() {
+export async function deposit(contractAddress, provider) {
+  const abi = [
+    {
+      inputs: [],
+      name: "deposit",
+      outputs: [],
+      stateMutability: "payable",
+      type: "function",
+    },
+  ];
+
   const data = encodeFunctionData({
-    abi: yieldDetails.depositAbi,
-    functionName: yieldDetails.depositAbi.name,
+    abi: abi,
+    functionName: abi.name,
   });
 
   const transactionRequest = {
-    to: yieldDetails.contractAddress,
+    to: contractAddress,
     data: data,
-    value: 100000, // Only necessary for payable methods
+    value: 0, // Only necessary for payable methods
   };
   const transactionHash = await provider.request({
     method: "eth_sendTransaction",

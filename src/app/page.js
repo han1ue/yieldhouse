@@ -8,6 +8,7 @@ import {
   Grid,
   TextField,
   Table,
+  Switch,
   Box,
   AlertDialog,
 } from "@radix-ui/themes";
@@ -47,97 +48,101 @@ export default function Home() {
     }
   };
   return (
-    <Flex direction="column" gap="6">
-      <Flex direction="row" justify="between">
-        <Flex direction="column" gap="2" width="300px">
-          <TextField.Root
-            onChange={(e) => setSearchQuery(e.target.value)}
-            variant="surface"
-            radius="large"
-            placeholder="Search for an asset or protocol"
-          >
-            <TextField.Slot>
-              <MagnifyingGlassIcon height="16" width="16" />
-            </TextField.Slot>
-          </TextField.Root>
-          <Grid columns="4" gap="1">
-            <Button
-              size="1"
-              color="gray"
-              variant={selectedAssetTypes.includes("Stable") ? "solid" : "soft"}
-              onClick={() => handleClickAssetType("Stable")}
+    <>
+      <Flex direction="column" gap="6">
+        <Flex direction="row" justify="between">
+          <Flex direction="column" gap="2" width="300px">
+            <TextField.Root
+              onChange={(e) => setSearchQuery(e.target.value)}
+              variant="surface"
+              radius="large"
+              placeholder="Search for an asset or protocol"
             >
-              Stables
-            </Button>
-            <Button
-              size="1"
-              color="gray"
-              variant={
-                selectedAssetTypes.includes("Lending") ? "solid" : "soft"
-              }
-              onClick={() => handleClickAssetType("Lending")}
-            >
-              Lending
-            </Button>
-            <Button
-              size="1"
-              color="gray"
-              variant={selectedAssetTypes.includes("LP") ? "solid" : "soft"}
-              onClick={() => handleClickAssetType("LP")}
-            >
-              LP
-            </Button>
-            <Button
-              size="1"
-              color="gray"
-              variant={selectedAssetTypes.includes("LST") ? "solid" : "soft"}
-              onClick={() => handleClickAssetType("LST")}
-            >
-              LST
-            </Button>
-            <Button
-              size="1"
-              color="gray"
-              variant={selectedAssetTypes.includes("LRT") ? "solid" : "soft"}
-              onClick={() => handleClickAssetType("LRT")}
-            >
-              LRT
-            </Button>
-          </Grid>
-        </Flex>
-        {isMobile ? (
-          <AlertDialog.Root>
-            <AlertDialog.Trigger>
-              <Button variant="classic">Chains</Button>
-            </AlertDialog.Trigger>
-            <AlertDialog.Content maxWidth="450px">
-              <AlertDialog.Title>Select Chains</AlertDialog.Title>
-              <Box m="8">
-                <ChainSelectionGrid
-                  selectedChains={selectedChains}
-                  handleClickChain={handleClickChain}
-                />
-              </Box>
+              <TextField.Slot>
+                <MagnifyingGlassIcon height="16" width="16" />
+              </TextField.Slot>
+            </TextField.Root>
+            <Grid columns="4" gap="1">
+              <Button
+                size="1"
+                color="gray"
+                variant={
+                  selectedAssetTypes.includes("Stable") ? "solid" : "soft"
+                }
+                onClick={() => handleClickAssetType("Stable")}
+              >
+                Stables
+              </Button>
+              <Button
+                size="1"
+                color="gray"
+                variant={
+                  selectedAssetTypes.includes("Lending") ? "solid" : "soft"
+                }
+                onClick={() => handleClickAssetType("Lending")}
+              >
+                Lending
+              </Button>
+              <Button
+                size="1"
+                color="gray"
+                variant={selectedAssetTypes.includes("LP") ? "solid" : "soft"}
+                onClick={() => handleClickAssetType("LP")}
+              >
+                LP
+              </Button>
+              <Button
+                size="1"
+                color="gray"
+                variant={selectedAssetTypes.includes("LST") ? "solid" : "soft"}
+                onClick={() => handleClickAssetType("LST")}
+              >
+                LST
+              </Button>
+              <Button
+                size="1"
+                color="gray"
+                variant={selectedAssetTypes.includes("LRT") ? "solid" : "soft"}
+                onClick={() => handleClickAssetType("LRT")}
+              >
+                LRT
+              </Button>
+            </Grid>
+          </Flex>
+          {isMobile ? (
+            <AlertDialog.Root>
+              <AlertDialog.Trigger>
+                <Button variant="classic">Chains</Button>
+              </AlertDialog.Trigger>
+              <AlertDialog.Content maxWidth="450px">
+                <AlertDialog.Title>Select Chains</AlertDialog.Title>
+                <Box m="8">
+                  <ChainSelectionGrid
+                    selectedChains={selectedChains}
+                    handleClickChain={handleClickChain}
+                  />
+                </Box>
 
-              <Flex gap="3" mt="4" justify="end">
-                <AlertDialog.Action>
-                  <Button variant="classic">Done</Button>
-                </AlertDialog.Action>
-              </Flex>
-            </AlertDialog.Content>
-          </AlertDialog.Root>
-        ) : (
-          <ChainSelectionGrid
-            selectedChains={selectedChains}
-            handleClickChain={handleClickChain}
-          />
-        )}
+                <Flex gap="3" mt="4" justify="end">
+                  <AlertDialog.Action>
+                    <Button variant="classic">Done</Button>
+                  </AlertDialog.Action>
+                </Flex>
+              </AlertDialog.Content>
+            </AlertDialog.Root>
+          ) : (
+            <ChainSelectionGrid
+              selectedChains={selectedChains}
+              handleClickChain={handleClickChain}
+            />
+          )}
+        </Flex>
+        <AssetTable
+          selectedChains={selectedChains}
+          selectedAssetTypes={selectedAssetTypes}
+          searchQuery={searchQuery}
+        />
       </Flex>
-      <AssetTable
-        selectedChains={selectedChains}
-        selectedAssetTypes={selectedAssetTypes}
-        searchQuery={searchQuery}
-      />
-    </Flex>
+    </>
   );
 }
