@@ -13,23 +13,16 @@ import {
   Grid,
   TextField,
   Separator,
+  Tooltip,
   RadioCards,
   Table,
   Box,
 } from "@radix-ui/themes";
 import RiskIndicator from "../../components/riskIndicator";
 import data from "/public/mockData.json";
+import { adapterRegistry } from "../../adapters/adapterRegistry";
 import React from "react";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
+
 import { Line } from "react-chartjs-2";
 import { faker } from "@faker-js/faker";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
@@ -41,59 +34,8 @@ export default function YieldPage({ params }) {
   var provider;
   const [selectedTab, setSelectedTab] = useState("1");
   const yieldDetails = data[params.id];
-
-  async function deposit() {
-    const data = encodeFunctionData({
-      abi: yieldDetails.depositAbi,
-      functionName: yieldDetails.depositAbi.name,
-    });
-
-    const transactionRequest = {
-      to: yieldDetails.contractAddress,
-      data: data,
-      value: 100000, // Only necessary for payable methods
-    };
-    const transactionHash = await provider.request({
-      method: "eth_sendTransaction",
-      params: [transactionRequest],
-    });
-
-    console.log("transactionHash", transactionHash);
-  }
-
-  async function withdraw() {
-    const data = encodeFunctionData({
-      abi: yieldDetails.withdrawAbi,
-      functionName: yieldDetails.withdrawAbi.name,
-    });
-
-    const transactionRequest = {
-      to: yieldDetails.contractAddress,
-      data: data,
-    };
-    const transactionHash = await provider.request({
-      method: "eth_sendTransaction",
-      params: [transactionRequest],
-    });
-  }
-
-  async function claim() {
-    const data = encodeFunctionData({
-      abi: yieldDetails.claimAbi,
-      functionName: yieldDetails.claimAbi.name,
-    });
-
-    const transactionRequest = {
-      to: yieldDetails.contractAddress,
-      data: data,
-    };
-    const transactionHash = await provider.request({
-      method: "eth_sendTransaction",
-      params: [transactionRequest],
-    });
-
-    console.log("transactionHash", transactionHash);
-  }
+  const claimAvailable =
+    adapterRegistry[yieldDetails.protocol.toLowerCase()].claim !== undefined;
 
   useEffect(() => {
     async function getProvider() {
@@ -133,9 +75,11 @@ export default function YieldPage({ params }) {
               />
             </Flex>
             <Separator size="3" orientation="vertical" />
-            <Flex justify="center" align="center">
-              <RiskIndicator risk={yieldDetails.risk} size={58} textSize={38} />
-            </Flex>
+            <RiskIndicator
+              risk={yieldDetails.risk ? yieldDetails.risk : 1}
+              size={58}
+              textSize={38}
+            />
           </Flex>
           <Flex
             direction={{
@@ -155,7 +99,7 @@ export default function YieldPage({ params }) {
               <RadioCards.Root
                 defaultValue="1"
                 size="1"
-                columns="3"
+                columns={claimAvailable ? "3" : "2"}
                 onValueChange={(value) => {
                   console.log(value);
                   setSelectedTab(value);
@@ -167,9 +111,11 @@ export default function YieldPage({ params }) {
                 <RadioCards.Item value="2">
                   <Text weight="bold">Withdraw</Text>
                 </RadioCards.Item>
-                <RadioCards.Item value="3">
-                  <Text weight="bold">Claim</Text>
-                </RadioCards.Item>
+                {claimAvailable && (
+                  <RadioCards.Item value="3" disabled={!claimAvailable}>
+                    <Text weight="bold">Claim</Text>
+                  </RadioCards.Item>
+                )}
               </RadioCards.Root>
               {selectedTab == "1" && (
                 <Card>
@@ -189,11 +135,23 @@ export default function YieldPage({ params }) {
                         </TextField.Slot>
                       </TextField.Root>
                       <Text size="1" weight="light">
-                        Balance: 0.00
+                        {"Balance: " +
+                          adapterRegistry[
+                            yieldDetails.protocol.toLowerCase()
+                          ].depositable() +
+                          " " +
+                          yieldDetails.asset}
                       </Text>
                     </Box>
                     <Separator size="4" />
-                    <Button onClick={deposit()} variant="classic">
+                    <Button
+                      onClick={() =>
+                        adapterRegistry[
+                          yieldDetails.protocol.toLowerCase()
+                        ].deposit()
+                      }
+                      variant="classic"
+                    >
                       Deposit
                     </Button>
                   </Flex>
@@ -217,11 +175,23 @@ export default function YieldPage({ params }) {
                         </TextField.Slot>
                       </TextField.Root>
                       <Text size="1" weight="light">
-                        Balance: 0.00
+                        {"Balance: " +
+                          adapterRegistry[
+                            yieldDetails.protocol.toLowerCase()
+                          ].withdrawable() +
+                          " " +
+                          yieldDetails.asset}
                       </Text>
                     </Box>
                     <Separator size="4" />
-                    <Button onClick={withdraw()} variant="classic">
+                    <Button
+                      onClick={() =>
+                        adapterRegistry[
+                          yieldDetails.protocol.toLowerCase()
+                        ].withdraw()
+                      }
+                      variant="classic"
+                    >
                       Withdraw
                     </Button>
                   </Flex>
@@ -230,11 +200,17 @@ export default function YieldPage({ params }) {
               {selectedTab == "3" && (
                 <Card>
                   <Flex direction="column" gap="4">
-                    <Text>
-                      Claim your rewards from staking your {yieldDetails.asset}
-                    </Text>
+                    <Text size="2">Claimable Assets</Text>
                     <Separator size="4" />
-                    <Button onClick={claim()} variant="classic">
+                    <Button
+                      onClick={
+                        claimAvailable &&
+                        adapterRegistry[
+                          yieldDetails.protocol.toLowerCase()
+                        ].claim()
+                      }
+                      variant="classic"
+                    >
                       Claim
                     </Button>
                   </Flex>

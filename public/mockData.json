@@ -8,10 +8,7 @@
     "type": "LP",
     "baseAsset": "USDT",
     "risk": 2,
-    "contractAddress": "0x7d2768de32b0b80b7a3454c06bdac94a69ddc7a9",
-    "depositAbi": "deposit",
-    "withdrawAbi": "withdraw",
-    "claimAbi": "claim"
+    "contractAddress": "0x7d2768de32b0b80b7a3454c06bdac94a69ddc7a9"
   },
   {
     "asset": "ETH",
@@ -22,9 +19,6 @@
     "type": "LP",
     "baseAsset": "USDC",
     "risk": 6,
-    "contractAddress": "0x7d2768de32b0b80b7a3454c06bdac94a69ddc7a9",
-    "depositAbi": "deposit",
-    "withdrawAbi": "withdraw",
-    "claimAbi": "claim"
+    "contractAddress": "0x7d2768de32b0b80b7a3454c06bdac94a69ddc7a9"
   }
 ]
