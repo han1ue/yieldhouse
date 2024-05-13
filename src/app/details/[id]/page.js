@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
+import { encodeFunctionData, decodeFunctionData } from "viem";
 import {
   Flex,
   Text,
@@ -31,11 +32,81 @@ import {
 } from "chart.js";
 import { Line } from "react-chartjs-2";
 import { faker } from "@faker-js/faker";
+import { usePrivy, useWallets } from "@privy-io/react-auth";
 import ApyChart from "../../components/apyChart";
 
 export default function YieldPage({ params }) {
+  const { ready, wallets } = useWallets();
+  var wallet;
+  var provider;
   const [selectedTab, setSelectedTab] = useState("1");
   const yieldDetails = data[params.id];
+
+  async function deposit() {
+    const data = encodeFunctionData({
+      abi: yieldDetails.depositAbi,
+      functionName: yieldDetails.depositAbi.name,
+    });
+
+    const transactionRequest = {
+      to: yieldDetails.contractAddress,
+      data: data,
+      value: 100000, // Only necessary for payable methods
+    };
+    const transactionHash = await provider.request({
+      method: "eth_sendTransaction",
+      params: [transactionRequest],
+    });
+
+    console.log("transactionHash", transactionHash);
+  }
+
+  async function withdraw() {
+    const data = encodeFunctionData({
+      abi: yieldDetails.withdrawAbi,
+      functionName: yieldDetails.withdrawAbi.name,
+    });
+
+    const transactionRequest = {
+      to: yieldDetails.contractAddress,
+      data: data,
+    };
+    const transactionHash = await provider.request({
+      method: "eth_sendTransaction",
+      params: [transactionRequest],
+    });
+  }
+
+  async function claim() {
+    const data = encodeFunctionData({
+      abi: yieldDetails.claimAbi,
+      functionName: yieldDetails.claimAbi.name,
+    });
+
+    const transactionRequest = {
+      to: yieldDetails.contractAddress,
+      data: data,
+    };
+    const transactionHash = await provider.request({
+      method: "eth_sendTransaction",
+      params: [transactionRequest],
+    });
+
+    console.log("transactionHash", transactionHash);
+  }
+
+  useEffect(() => {
+    async function getProvider() {
+      console.log("ready", ready);
+      if (ready && wallets.length > 0) {
+        wallet = wallets[0];
+        console.log("wallet", wallet);
+        provider = await wallet.getEthereumProvider();
+        console.log("provider", provider);
+      }
+    }
+    getProvider();
+  }, [ready, wallets]);
 
   return (
     <>
@@ -122,7 +193,9 @@ export default function YieldPage({ params }) {
                       </Text>
                     </Box>
                     <Separator size="4" />
-                    <Button variant="classic">Deposit</Button>
+                    <Button onClick={deposit()} variant="classic">
+                      Deposit
+                    </Button>
                   </Flex>
                 </Card>
               )}
@@ -148,7 +221,9 @@ export default function YieldPage({ params }) {
                       </Text>
                     </Box>
                     <Separator size="4" />
-                    <Button variant="classic">Withdraw</Button>
+                    <Button onClick={withdraw()} variant="classic">
+                      Withdraw
+                    </Button>
                   </Flex>
                 </Card>
               )}
@@ -159,7 +234,9 @@ export default function YieldPage({ params }) {
                       Claim your rewards from staking your {yieldDetails.asset}
                     </Text>
                     <Separator size="4" />
-                    <Button variant="classic">Claim</Button>
+                    <Button onClick={claim()} variant="classic">
+                      Claim
+                    </Button>
                   </Flex>
                 </Card>
               )}
@@ -217,4 +294,4 @@ export default function YieldPage({ params }) {
   );
 }
 
-export const runtime = "edge";
+export const runtime = "experimental-edge";
