@@ -294,4 +294,4 @@ export default function YieldPage({ params }) {
   );
 }
 
-export const runtime = "experimental-edge";
+export const runtime = "edge";
