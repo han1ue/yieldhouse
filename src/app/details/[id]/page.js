@@ -17,12 +17,26 @@ import {
   Box,
 } from "@radix-ui/themes";
 import RiskIndicator from "../../components/riskIndicator";
-
 import data from "/public/mockData.json";
+import React from "react";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { Line } from "react-chartjs-2";
+import { faker } from "@faker-js/faker";
+import ApyChart from "../../components/apyChart";
 
 export default function YieldPage({ params }) {
   const [selectedTab, setSelectedTab] = useState("1");
   const yieldDetails = data[params.id];
+
   return (
     <>
       {yieldDetails ? (
@@ -152,39 +166,46 @@ export default function YieldPage({ params }) {
             </Flex>
             <Flex
               direction="column"
-              gap="4"
+              gap="5"
               width={{
                 initial: "100%",
                 sm: "50%",
               }}
             >
-              <Flex justify="center" direction="row">
-                <Card size="1">
-                  <Flex direction="row" gap="7" justify="center" m="4" b="8">
-                    <Flex direction="column" gap="1">
-                      <Text size="1">Chain</Text>
-                      <Text size="3" weight="medium">
-                        {yieldDetails.chain}
-                      </Text>
-                    </Flex>
-                    <Flex direction="column" gap="1">
-                      <Text size="1">TVL</Text>
-                      <Text size="3" weight="medium">
-                        {yieldDetails.tvl}
-                      </Text>
-                    </Flex>
-                    <Flex direction="column" gap="1">
-                      <Text size="1">Type</Text>
-                      <Text size="3" weight="medium">
-                        {yieldDetails.type}
-                      </Text>
-                    </Flex>
+              <Card>
+                <Flex direction="row" gap="7" justify="center" my="1">
+                  <Flex direction="column" gap="1">
+                    <Text size="1">Chain</Text>
+                    <Text size="3" weight="medium">
+                      {yieldDetails.chain}
+                    </Text>
                   </Flex>
-                </Card>
-              </Flex>
-              <Flex direction="column" gap="1">
-                <Text>APY: 20%</Text>
-                <Text>Graph</Text>
+                  <Flex direction="column" gap="1">
+                    <Text size="1">TVL</Text>
+                    <Text size="3" weight="medium">
+                      {yieldDetails.tvl}
+                    </Text>
+                  </Flex>
+                  <Flex direction="column" gap="1">
+                    <Text size="1">Type</Text>
+                    <Text size="3" weight="medium">
+                      {yieldDetails.type}
+                    </Text>
+                  </Flex>
+                </Flex>
+              </Card>
+
+              <Flex direction="column" gap="2">
+                <Flex direction="row" gapX="1" align="baseline">
+                  <Text size="5" weight="medium">
+                    {yieldDetails.apy * 100 + "%"}
+                  </Text>
+                  <Text size="1" weight="light">
+                    {" "}
+                    APY
+                  </Text>
+                </Flex>
+                <ApyChart />
               </Flex>
             </Flex>
           </Flex>
