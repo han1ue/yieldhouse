@@ -28,7 +28,9 @@ export default function RootLayout({ children }) {
           >
             <Container maxWidth="640px" mx="2">
               <Header />
-              <TestnetContextProvider children={children} testnet={testnet} />
+              <TestnetContextProvider testnet={testnet}>
+                {children}
+              </TestnetContextProvider>
               <Flex direction="row" justify="between" mx="2" mt="8">
                 <Text size="1">Last update: 6 hours ago</Text>
                 <Flex direction="row" align="center" gapX="1">
