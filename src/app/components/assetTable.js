@@ -9,7 +9,7 @@ import {
   Table,
   Box,
 } from "@radix-ui/themes";
-import data from "/public/mockData.json";
+import yields from "/public/mockData/yields.json";
 import Image from "next/image";
 import "react-circular-progressbar/dist/styles.css";
 import Link from "next/link";
@@ -24,7 +24,7 @@ export default function AssetTable({
 
   useEffect(() => {
     // Filter data based on selected chains, asset types, and search query
-    const filteredData = data.filter((asset) => {
+    const filteredData = yields.filter((asset) => {
       // Check if the asset's chain is included in selected chains
       const chainMatch =
         selectedChains.length === 0 || selectedChains.includes(asset.chain);

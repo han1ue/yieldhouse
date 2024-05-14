@@ -14,7 +14,7 @@ import {
   Box,
 } from "@radix-ui/themes";
 import { useState } from "react";
-import data from "/public/mockPositions.json";
+import positions from "/public/mockData/positions.json";
 import Image from "next/image";
 import Link from "next/link";
 import { useTestnetContext } from "../components/TestnetContext";
@@ -25,7 +25,7 @@ export default function Dashboard() {
     <Flex direction="column" gap="6">
       <Heading weight="medium">My current positions</Heading>
       <Grid columns="4" gap="2">
-        {data.map((position) => (
+        {positions.map((position) => (
           <Card asChild key={position.id}>
             <Link href={"/details/" + position.id}>
               <Flex direction="column" align="center" gap="1">

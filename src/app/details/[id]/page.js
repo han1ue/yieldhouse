@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { encodeFunctionData, decodeFunctionData } from "viem";
 import {
   Flex,
   Text,
@@ -19,7 +18,7 @@ import {
   Box,
 } from "@radix-ui/themes";
 import RiskIndicator from "../../components/riskIndicator";
-import data from "/public/mockData.json";
+import yields from "/public/mockData/yields.json";
 import { adapterRegistry } from "../../adapters/adapterRegistry";
 import React from "react";
 
@@ -33,7 +32,7 @@ export default function YieldPage({ params }) {
   var wallet;
   var provider;
   const [selectedTab, setSelectedTab] = useState("1");
-  const yieldDetails = data[params.id];
+  const yieldDetails = yields[params.id];
   const claimAvailable =
     adapterRegistry[yieldDetails.protocol.toLowerCase()].claim !== undefined;
 
