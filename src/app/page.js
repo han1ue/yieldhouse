@@ -115,7 +115,12 @@ export default function Home() {
                 <Button variant="classic">Chains</Button>
               </AlertDialog.Trigger>
               <AlertDialog.Content maxWidth="450px">
-                <AlertDialog.Title>Select Chains</AlertDialog.Title>
+                <AlertDialog.Title>
+                  {"Select Chains" +
+                    (selectedChains.length > 0
+                      ? " (" + selectedChains.length + ")"
+                      : "")}
+                </AlertDialog.Title>
                 <Box m="8">
                   <ChainSelectionGrid
                     selectedChains={selectedChains}
