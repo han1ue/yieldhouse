@@ -15,17 +15,12 @@ import {
 } from "@radix-ui/themes";
 import { useState } from "react";
 import data from "/public/mockPositions.json";
-import {
-  FaceIcon,
-  ImageIcon,
-  SunIcon,
-  MagnifyingGlassIcon,
-} from "@radix-ui/react-icons";
 import Image from "next/image";
 import Link from "next/link";
-import { useContext } from "react";
+import { useTestnetContext } from "../components/TestnetContext";
 
 export default function Dashboard() {
+  const testnet = useTestnetContext();
   return (
     <Flex direction="column" gap="6">
       <Heading weight="medium">My current positions</Heading>

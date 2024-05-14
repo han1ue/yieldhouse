@@ -3,7 +3,7 @@
     "id": "1",
     "asset": "ETH",
     "chain": "Ethereum",
-    "protocol": "AAVE",
+    "protocol": "AAVEV3",
     "value": 1000,
     "profit": 2000
   }
