@@ -10,9 +10,11 @@ import {
   Box,
 } from "@radix-ui/themes";
 import yields from "/public/mockData/yields.json";
+import yieldsTestnet from "/public/mockData/yieldsTestnet.json";
 import Image from "next/image";
 import "react-circular-progressbar/dist/styles.css";
 import Link from "next/link";
+import { useTestnetContext } from "../components/TestnetContext";
 import RiskIndicator from "./riskIndicator";
 
 export default function AssetTable({
@@ -21,10 +23,12 @@ export default function AssetTable({
   searchQuery,
 }) {
   const [tableData, setTableData] = useState([]);
+  const testnet = useTestnetContext();
 
   useEffect(() => {
+    const yieldsData = testnet ? yieldsTestnet : yields;
     // Filter data based on selected chains, asset types, and search query
-    const filteredData = yields.filter((asset) => {
+    const filteredData = yieldsData.filter((asset) => {
       // Check if the asset's chain is included in selected chains
       const chainMatch =
         selectedChains.length === 0 || selectedChains.includes(asset.chain);
@@ -41,7 +45,7 @@ export default function AssetTable({
     });
 
     setTableData(filteredData);
-  }, [selectedChains, selectedAssetTypes, searchQuery]);
+  }, [selectedChains, selectedAssetTypes, searchQuery, testnet]);
 
   return (
     <Table.Root variant="ghost" size="1">

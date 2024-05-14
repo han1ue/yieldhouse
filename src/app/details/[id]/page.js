@@ -21,7 +21,6 @@ import RiskIndicator from "../../components/riskIndicator";
 import yields from "/public/mockData/yields.json";
 import { adapterRegistry } from "../../adapters/adapterRegistry";
 import React from "react";
-
 import { Line } from "react-chartjs-2";
 import { faker } from "@faker-js/faker";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
@@ -249,7 +248,7 @@ export default function YieldPage({ params }) {
 
               <Flex direction="column" gap="2">
                 <Flex direction="row" gapX="1" align="baseline">
-                  <Text size="5" weight="medium">
+                  <Text ml="2" size="7" weight="medium">
                     {yieldDetails.apy * 100 + "%"}
                   </Text>
                   <Text size="1" weight="light">

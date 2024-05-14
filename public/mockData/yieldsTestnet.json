@@ -2,7 +2,7 @@
   {
     "asset": "ETH",
     "chain": "Ethereum",
-    "protocol": "AAVEV3",
+    "protocol": "UNISWAPV3",
     "apy": 0.2113,
     "tvl": 73000,
     "type": "LP",
@@ -13,7 +13,7 @@
   {
     "asset": "ETH",
     "chain": "Arbitrum",
-    "protocol": "AAVEV3",
+    "protocol": "UNISWAPV3",
     "apy": 0.172,
     "tvl": 1200,
     "type": "LP",
