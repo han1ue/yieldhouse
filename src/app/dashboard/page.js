@@ -20,7 +20,6 @@ import Link from "next/link";
 import { useTestnetContext } from "../components/TestnetContext";
 
 export default function Dashboard() {
-  const testnet = useTestnetContext();
   return (
     <Flex direction="column" gap="6">
       <Heading weight="medium">My current positions</Heading>
@@ -47,7 +46,7 @@ export default function Dashboard() {
                     <Image
                       src={
                         "/images/assets/" +
-                        position.asset.toLowerCase() +
+                        position.asset.name.toLowerCase() +
                         ".svg"
                       }
                       width={25}

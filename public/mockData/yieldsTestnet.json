@@ -1,24 +1,17 @@
 [
   {
-    "asset": "ETH",
-    "chain": "Ethereum",
-    "protocol": "UNISWAPV3",
+    "asset": {
+      "name": "ETH",
+      "address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
+    },
+    "chain": "Sepolia",
+    "chainId": 11155111,
+    "protocol": "AAVEV3",
     "apy": 0.2113,
     "tvl": 73000,
-    "type": "LP",
-    "baseAsset": "USDT",
+    "type": "Lending",
     "risk": 2,
-    "contractAddress": "0x7d2768de32b0b80b7a3454c06bdac94a69ddc7a9"
-  },
-  {
-    "asset": "ETH",
-    "chain": "Arbitrum",
-    "protocol": "UNISWAPV3",
-    "apy": 0.172,
-    "tvl": 1200,
-    "type": "LP",
-    "baseAsset": "USDC",
-    "risk": 6,
-    "contractAddress": "0x7d2768de32b0b80b7a3454c06bdac94a69ddc7a9"
+    "contractAddress": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+    "description": "Your ETH is deposited in AAVE and used for lending. You earn interest on your ETH. The interest rate is variable and depends on the demand for borrowing ETH."
   }
 ]

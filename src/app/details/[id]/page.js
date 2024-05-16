@@ -14,39 +14,130 @@ import {
   Separator,
   Tooltip,
   RadioCards,
+  Callout,
   Table,
   Box,
 } from "@radix-ui/themes";
+import { mainnet, base, arbitrum, sepolia } from "viem/chains";
+import {
+  InfoCircledIcon,
+  ExclamationTriangleIcon,
+} from "@radix-ui/react-icons";
 import RiskIndicator from "../../components/riskIndicator";
 import yields from "/public/mockData/yields.json";
+import yieldsTestnet from "/public/mockData/yieldsTestnet.json";
 import { adapterRegistry } from "../../adapters/adapterRegistry";
+import { useTestnetContext } from "../../components/TestnetContext";
 import React from "react";
 import { Line } from "react-chartjs-2";
+import { createWalletClient, custom, extractChain, formatEther } from "viem";
 import { faker } from "@faker-js/faker";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
 import ApyChart from "../../components/apyChart";
 
 export default function YieldPage({ params }) {
+  const testnet = useTestnetContext();
   const { ready, wallets } = useWallets();
-  var wallet;
-  var provider;
+  const [provider, setProvider] = useState();
   const [selectedTab, setSelectedTab] = useState("1");
-  const yieldDetails = yields[params.id];
-  const claimAvailable =
-    adapterRegistry[yieldDetails.protocol.toLowerCase()].claim !== undefined;
+  const [initialChainSwitch, setInitialChainSwitch] = useState(false);
+  const [depositable, setDepositable] = useState("0");
+  const [depositAmount, setDepositAmount] = useState();
+  const [depositApproved, setDepositApproved] = useState(false);
+  const [withdrawable, setWithdrawable] = useState("0");
+  const [withdrawAmount, setWithdrawAmount] = useState();
+  const [withdrawApproved, setWithdrawApproved] = useState(false);
+  const yieldsData = testnet ? yieldsTestnet : yields;
+  const yieldDetails = yieldsData[params.id];
+  const claimAvailable = false;
 
   useEffect(() => {
     async function getProvider() {
       console.log("ready", ready);
-      if (ready && wallets.length > 0) {
-        wallet = wallets[0];
-        console.log("wallet", wallet);
-        provider = await wallet.getEthereumProvider();
-        console.log("provider", provider);
+
+      var walletZero = wallets[0];
+      console.log("walletZero", walletZero);
+      setProvider(await walletZero.getEthereumProvider());
+    }
+
+    async function getDepositable() {
+      console.log("getDepositable");
+      setDepositable(
+        await adapterRegistry[yieldDetails.protocol.toLowerCase()].depositable(
+          wallets[0],
+          yieldDetails.chainId,
+          yieldDetails.contractAddress
+        )
+      );
+    }
+
+    async function getWithdrawable() {
+      console.log("getWithdrawable");
+      setWithdrawable(
+        await adapterRegistry[yieldDetails.protocol.toLowerCase()].withdrawable(
+          wallets[0],
+          yieldDetails.chainId,
+          yieldDetails.contractAddress
+        )
+      );
+    }
+
+    if (ready && wallets.length > 0) {
+      getProvider();
+
+      // Get approval status
+      setDepositApproved(
+        adapterRegistry[yieldDetails.protocol.toLowerCase()].approvedDeposit(
+          wallets[0],
+          yieldDetails.chainId,
+          yieldDetails.asset.address,
+          yieldDetails.contractAddress,
+          depositAmount
+        )
+      );
+
+      // Get depositable amount
+      getDepositable();
+
+      // Get withdrawable amount
+      getWithdrawable();
+
+      // Chain switch
+      if (!initialChainSwitch) {
+        switchChain();
+        setInitialChainSwitch(true);
       }
     }
-    getProvider();
   }, [ready, wallets]);
+
+  async function switchChain() {
+    console.log("yieldDetails", yieldDetails);
+    console.log("wallets[0]", wallets[0]);
+    const walletChainId = wallets[0].chainId;
+    console.log("yieldDetails.chainId", yieldDetails.chainId);
+    if (walletChainId != yieldDetails.chainId) {
+      wallets[0]
+        .switchChain(yieldDetails.chainId)
+        .then(() => {
+          console.log("Switched chain to", yieldDetails.chainId);
+        })
+        .catch(async (error) => {
+          if (error.message.startsWith("Unrecognized chain ID")) {
+            console.log("Adding chain to wallet");
+            const walletClient = createWalletClient({
+              transport: custom(provider),
+            });
+            // If the chain hasn't been added to the wallet, add it and try again
+            await walletClient.addChain({
+              chain: extractChain({
+                chains: [mainnet, base, arbitrum, sepolia],
+                id: yieldDetails.chainId,
+              }),
+            });
+          }
+        });
+    }
+  }
 
   return (
     <>
@@ -56,7 +147,9 @@ export default function YieldPage({ params }) {
             <Flex direction="row" justify="center" align="center" gap="3">
               <Image
                 src={
-                  "/images/assets/" + yieldDetails.asset.toLowerCase() + ".svg"
+                  "/images/assets/" +
+                  yieldDetails.asset.name.toLowerCase() +
+                  ".svg"
                 }
                 width={25}
                 height={25}
@@ -115,16 +208,44 @@ export default function YieldPage({ params }) {
                   </RadioCards.Item>
                 )}
               </RadioCards.Root>
+              {yieldDetails.chainId !=
+                wallets[0].chainId.substring(
+                  wallets[0].chainId.indexOf(":") + 1
+                ) && (
+                <Callout.Root color="red" role="alert" size="2">
+                  <Callout.Icon>
+                    <ExclamationTriangleIcon />
+                  </Callout.Icon>
+                  <Callout.Text>
+                    {`Please switch to the ${yieldDetails.chain} network to see your balance.`}
+                  </Callout.Text>
+                  <Button
+                    size="1"
+                    onClick={() => {
+                      switchChain();
+                    }}
+                  >
+                    Switch Network
+                  </Button>
+                </Callout.Root>
+              )}
               {selectedTab == "1" && (
                 <Card>
                   <Flex direction="column" gap="4">
                     <Box>
-                      <TextField.Root size="3" type="number">
+                      <TextField.Root
+                        size="3"
+                        type="number"
+                        onChange={(e) => {
+                          console.log(e.target.value);
+                          setDepositAmount(e.target.value);
+                        }}
+                      >
                         <TextField.Slot>
                           <Image
                             src={
                               "/images/assets/" +
-                              yieldDetails.asset.toLowerCase() +
+                              yieldDetails.asset.name.toLowerCase() +
                               ".svg"
                             }
                             width={20}
@@ -134,24 +255,48 @@ export default function YieldPage({ params }) {
                       </TextField.Root>
                       <Text size="1" weight="light">
                         {"Balance: " +
-                          adapterRegistry[
-                            yieldDetails.protocol.toLowerCase()
-                          ].depositable() +
+                          Number(formatEther(depositable)).toFixed(4) +
                           " " +
-                          yieldDetails.asset}
+                          yieldDetails.asset.name}
                       </Text>
                     </Box>
                     <Separator size="4" />
-                    <Button
-                      onClick={() =>
-                        adapterRegistry[
-                          yieldDetails.protocol.toLowerCase()
-                        ].deposit()
-                      }
-                      variant="classic"
-                    >
-                      Deposit
-                    </Button>
+                    {depositApproved ? (
+                      <Button
+                        onClick={() => {
+                          switchChain();
+                          adapterRegistry[
+                            yieldDetails.protocol.toLowerCase()
+                          ].deposit(
+                            wallets[0],
+                            yieldDetails.chainId,
+                            yieldDetails.contractAddress,
+                            depositAmount
+                          );
+                        }}
+                        variant="classic"
+                      >
+                        Deposit
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={async () => {
+                          switchChain();
+                          await adapterRegistry[
+                            yieldDetails.protocol.toLowerCase()
+                          ].approveDeposit(
+                            wallets[0],
+                            yieldDetails.chainId,
+                            yieldDetails.contractAddress,
+                            depositAmount
+                          );
+                          setDepositApproved(true);
+                        }}
+                        variant="classic"
+                      >
+                        Approve
+                      </Button>
+                    )}
                   </Flex>
                 </Card>
               )}
@@ -164,7 +309,7 @@ export default function YieldPage({ params }) {
                           <Image
                             src={
                               "/images/assets/" +
-                              yieldDetails.asset.toLowerCase() +
+                              yieldDetails.asset.name.toLowerCase() +
                               ".svg"
                             }
                             width={20}
@@ -174,20 +319,19 @@ export default function YieldPage({ params }) {
                       </TextField.Root>
                       <Text size="1" weight="light">
                         {"Balance: " +
-                          adapterRegistry[
-                            yieldDetails.protocol.toLowerCase()
-                          ].withdrawable() +
+                          withdrawable +
                           " " +
-                          yieldDetails.asset}
+                          yieldDetails.asset.name}
                       </Text>
                     </Box>
                     <Separator size="4" />
                     <Button
-                      onClick={() =>
+                      onClick={() => {
+                        switchChain();
                         adapterRegistry[
                           yieldDetails.protocol.toLowerCase()
-                        ].withdraw()
-                      }
+                        ].withdraw();
+                      }}
                       variant="classic"
                     >
                       Withdraw
@@ -201,12 +345,13 @@ export default function YieldPage({ params }) {
                     <Text size="2">Claimable Assets</Text>
                     <Separator size="4" />
                     <Button
-                      onClick={
+                      onClick={() => {
+                        switchChain();
                         claimAvailable &&
-                        adapterRegistry[
-                          yieldDetails.protocol.toLowerCase()
-                        ].claim()
-                      }
+                          adapterRegistry[
+                            yieldDetails.protocol.toLowerCase()
+                          ].claim();
+                      }}
                       variant="classic"
                     >
                       Claim
@@ -214,6 +359,12 @@ export default function YieldPage({ params }) {
                   </Flex>
                 </Card>
               )}
+              <Callout.Root size="1">
+                <Callout.Icon>
+                  <InfoCircledIcon />
+                </Callout.Icon>
+                <Callout.Text>{yieldDetails.description}</Callout.Text>
+              </Callout.Root>
             </Flex>
             <Flex
               direction="column"
@@ -245,7 +396,6 @@ export default function YieldPage({ params }) {
                   </Flex>
                 </Flex>
               </Card>
-
               <Flex direction="column" gap="2">
                 <Flex direction="row" gapX="1" align="baseline">
                   <Text ml="2" size="7" weight="medium">

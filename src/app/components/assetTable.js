@@ -67,14 +67,16 @@ export default function AssetTable({
               <Flex direction="row" align="center">
                 <Box>
                   <Image
-                    src={"/images/assets/" + row.asset.toLowerCase() + ".svg"}
+                    src={
+                      "/images/assets/" + row.asset.name.toLowerCase() + ".svg"
+                    }
                     width={24}
                     height={24}
                   />
                 </Box>
                 <Flex direction="roq" align="start">
                   <Text size="3" weight="medium" ml="2" trim="start">
-                    {row.asset}
+                    {row.asset.name}
                   </Text>
                   {row.type == "LP" && (
                     <Text size="1" color="gray" ml="1">

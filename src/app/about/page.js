@@ -26,7 +26,7 @@ export default function About() {
   return (
     <Flex direction="column" gap="4">
       <Flex direction="column">
-        <Heading size="3">Integrated Protocols</Heading>
+        <Heading size="3">Integrated DeFi Protocols</Heading>
         <Text>AAVE</Text>
       </Flex>
       <Flex direction="column">

@@ -10,15 +10,24 @@ import { Flex, Switch, Text } from "@radix-ui/themes";
 import { PrivyProvider } from "@privy-io/react-auth";
 import Header from "./components/header";
 import { TestnetContextProvider } from "./components/TestnetContext";
+import { usePathname } from "next/navigation";
+import { base, mainnet, sepolia, arbitrum } from "viem/chains";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({ children }) {
+  const pathname = usePathname();
   const [testnet, setTestnet] = useState(false);
   return (
     <html lang="en">
       <body className={inter.className}>
-        <PrivyProvider appId="clvyg5hc308tixi9m43pjngmw">
+        <PrivyProvider
+          appId="clvyg5hc308tixi9m43pjngmw"
+          config={{
+            defaultChain: mainnet,
+            chains: [mainnet, base, arbitrum, sepolia],
+          }}
+        >
           <Theme
             accentColor="mint"
             grayColor="gray"
@@ -33,16 +42,19 @@ export default function RootLayout({ children }) {
               </TestnetContextProvider>
               <Flex direction="row" justify="between" mx="2" mt="8">
                 <Text size="1">Last update: 6 hours ago</Text>
-                <Flex direction="row" align="center" gapX="1">
-                  <Text size="1" weight="light">
-                    Testnet Mode
-                  </Text>
-                  <Switch
-                    size="1"
-                    checked={testnet}
-                    onCheckedChange={() => setTestnet(!testnet)}
-                  />
-                </Flex>
+                {!pathname.startsWith("/details/") && (
+                  <Flex direction="row" align="center" gapX="1">
+                    <Text size="1" weight="light">
+                      Testnet Mode
+                    </Text>
+
+                    <Switch
+                      size="1"
+                      checked={testnet}
+                      onCheckedChange={() => setTestnet(!testnet)}
+                    />
+                  </Flex>
+                )}
               </Flex>
             </Container>
           </Theme>
