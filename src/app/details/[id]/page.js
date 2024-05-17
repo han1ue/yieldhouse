@@ -236,7 +236,7 @@ export default function YieldPage({ params }) {
                 )}
               </RadioCards.Root>
               {yieldDetails.chainId !=
-                wallets[0].chainId.substring(
+                wallets[0]?.chainId.substring(
                   wallets[0].chainId.indexOf(":") + 1
                 ) && (
                 <Callout.Root color="red" role="alert" size="2">
@@ -244,16 +244,20 @@ export default function YieldPage({ params }) {
                     <ExclamationTriangleIcon />
                   </Callout.Icon>
                   <Callout.Text>
-                    {`Please switch to the ${yieldDetails.chain} network to see your balance.`}
+                    {wallets[0]
+                      ? `Please switch to the ${yieldDetails.chain} network to see your balance.`
+                      : "Connect your wallet to see your balance."}
                   </Callout.Text>
-                  <Button
-                    size="1"
-                    onClick={() => {
-                      switchChain();
-                    }}
-                  >
-                    Switch Network
-                  </Button>
+                  {wallets[0] && (
+                    <Button
+                      size="1"
+                      onClick={() => {
+                        switchChain();
+                      }}
+                    >
+                      Switch Network
+                    </Button>
+                  )}
                 </Callout.Root>
               )}
               {selectedTab == "1" && (
@@ -300,6 +304,7 @@ export default function YieldPage({ params }) {
                             yieldDetails.contractAddress,
                             depositAmount
                           );
+                          console.log("hash", hash);
                           const publicClient = createPublicClient({
                             chain: extractChain({
                               chains: [mainnet, base, arbitrum, sepolia],
