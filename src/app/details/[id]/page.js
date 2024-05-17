@@ -96,6 +96,16 @@ export default function YieldPage({ params }) {
         )
       );
 
+      setWithdrawApproved(
+        adapterRegistry[yieldDetails.protocol.toLowerCase()].approvedWithdraw(
+          wallets[0],
+          yieldDetails.chainId,
+          yieldDetails.asset.address,
+          yieldDetails.contractAddress,
+          withdrawAmount
+        )
+      );
+
       // Get depositable amount
       getDepositable();
 
@@ -304,7 +314,14 @@ export default function YieldPage({ params }) {
                 <Card>
                   <Flex direction="column" gap="4">
                     <Box>
-                      <TextField.Root size="3" type="number">
+                      <TextField.Root
+                        size="3"
+                        type="number"
+                        onChange={(e) => {
+                          console.log(e.target.value);
+                          setWithdrawAmount(e.target.value);
+                        }}
+                      >
                         <TextField.Slot>
                           <Image
                             src={
@@ -319,23 +336,48 @@ export default function YieldPage({ params }) {
                       </TextField.Root>
                       <Text size="1" weight="light">
                         {"Balance: " +
-                          withdrawable +
+                          Number(formatEther(withdrawable)).toFixed(6) +
                           " " +
                           yieldDetails.asset.name}
                       </Text>
                     </Box>
                     <Separator size="4" />
-                    <Button
-                      onClick={() => {
-                        switchChain();
-                        adapterRegistry[
-                          yieldDetails.protocol.toLowerCase()
-                        ].withdraw();
-                      }}
-                      variant="classic"
-                    >
-                      Withdraw
-                    </Button>
+                    {withdrawApproved ? (
+                      <Button
+                        onClick={() => {
+                          switchChain();
+                          adapterRegistry[
+                            yieldDetails.protocol.toLowerCase()
+                          ].withdraw(
+                            wallets[0],
+                            yieldDetails.chainId,
+                            yieldDetails.contractAddress,
+                            withdrawAmount
+                          );
+                        }}
+                        variant="classic"
+                      >
+                        Withdraw
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={async () => {
+                          switchChain();
+                          await adapterRegistry[
+                            yieldDetails.protocol.toLowerCase()
+                          ].approveWithdraw(
+                            wallets[0],
+                            yieldDetails.chainId,
+                            yieldDetails.contractAddress,
+                            withdrawAmount
+                          );
+                          setWithdrawApproved(true);
+                        }}
+                        variant="classic"
+                      >
+                        Approve
+                      </Button>
+                    )}
                   </Flex>
                 </Card>
               )}
@@ -363,7 +405,7 @@ export default function YieldPage({ params }) {
                 <Callout.Icon>
                   <InfoCircledIcon />
                 </Callout.Icon>
-                <Callout.Text>{yieldDetails.description}</Callout.Text>
+                <Callout.Text size="1">{yieldDetails.description}</Callout.Text>
               </Callout.Root>
             </Flex>
             <Flex
