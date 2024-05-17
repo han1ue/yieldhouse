@@ -46,7 +46,7 @@ export default function Dashboard() {
                     <Image
                       src={
                         "/images/assets/" +
-                        position.asset.name.toLowerCase() +
+                        position.asset.toLowerCase() +
                         ".svg"
                       }
                       width={25}
