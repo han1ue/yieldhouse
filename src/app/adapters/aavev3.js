@@ -157,6 +157,10 @@ export async function approvedWithdraw(
     aTokenAddress: token == ETH_MOCK_ADDRESS && addressBook.ASSETS.WETH.A_TOKEN,
   });
 
+  console.log("approvedWithdraw:tx", tx);
+
+  console.log("approvedWithdraw", tx.length == 1);
+
   return tx.length == 1;
 }
 

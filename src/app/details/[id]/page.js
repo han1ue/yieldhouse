@@ -42,10 +42,10 @@ export default function YieldPage({ params }) {
   const [selectedTab, setSelectedTab] = useState("1");
   const [initialChainSwitch, setInitialChainSwitch] = useState(false);
   const [depositable, setDepositable] = useState("0");
-  const [depositAmount, setDepositAmount] = useState();
+  const [depositAmount, setDepositAmount] = useState("0");
   const [depositApproved, setDepositApproved] = useState(false);
   const [withdrawable, setWithdrawable] = useState("0");
-  const [withdrawAmount, setWithdrawAmount] = useState();
+  const [withdrawAmount, setWithdrawAmount] = useState("0");
   const [withdrawApproved, setWithdrawApproved] = useState(false);
   const yieldsData = testnet ? yieldsTestnet : yields;
   const yieldDetails = yieldsData[params.id];
@@ -62,49 +62,60 @@ export default function YieldPage({ params }) {
 
     async function getDepositable() {
       console.log("getDepositable");
-      setDepositable(
-        await adapterRegistry[yieldDetails.protocol.toLowerCase()].depositable(
-          wallets[0],
-          yieldDetails.chainId,
-          yieldDetails.contractAddress
-        )
+      const depositable = await adapterRegistry[
+        yieldDetails.protocol.toLowerCase()
+      ].depositable(
+        wallets[0],
+        yieldDetails.chainId,
+        yieldDetails.contractAddress
       );
+      setDepositable(depositable);
+
+      const approvedDepositResult = adapterRegistry[
+        yieldDetails.protocol.toLowerCase()
+      ].approvedDeposit(
+        wallets[0],
+        yieldDetails.chainId,
+        yieldDetails.asset.address,
+        yieldDetails.contractAddress,
+        depositable
+      );
+
+      console.log("approvedDepositResult", approvedDepositResult);
+      // Get approval status
+      setDepositApproved(depositable > 0 && approvedDepositResult);
     }
 
     async function getWithdrawable() {
       console.log("getWithdrawable");
-      setWithdrawable(
-        await adapterRegistry[yieldDetails.protocol.toLowerCase()].withdrawable(
-          wallets[0],
-          yieldDetails.chainId,
-          yieldDetails.contractAddress
-        )
+      const withdrawable = await adapterRegistry[
+        yieldDetails.protocol.toLowerCase()
+      ].withdrawable(
+        wallets[0],
+        yieldDetails.chainId,
+        yieldDetails.contractAddress
       );
+      setWithdrawable(withdrawable);
+
+      console.log("withdrawable", withdrawable);
+
+      const approvedWithdrawResult = await adapterRegistry[
+        yieldDetails.protocol.toLowerCase()
+      ].approvedWithdraw(
+        wallets[0],
+        yieldDetails.chainId,
+        yieldDetails.asset.address,
+        yieldDetails.contractAddress,
+        withdrawable
+      );
+
+      console.log("approvedWithdrawResult", approvedWithdrawResult);
+
+      setWithdrawApproved(withdrawable > 0 && approvedWithdrawResult);
     }
 
     if (ready && wallets.length > 0) {
       getProvider();
-
-      // Get approval status
-      setDepositApproved(
-        adapterRegistry[yieldDetails.protocol.toLowerCase()].approvedDeposit(
-          wallets[0],
-          yieldDetails.chainId,
-          yieldDetails.asset.address,
-          yieldDetails.contractAddress,
-          depositAmount
-        )
-      );
-
-      setWithdrawApproved(
-        adapterRegistry[yieldDetails.protocol.toLowerCase()].approvedWithdraw(
-          wallets[0],
-          yieldDetails.chainId,
-          yieldDetails.asset.address,
-          yieldDetails.contractAddress,
-          withdrawAmount
-        )
-      );
 
       // Get depositable amount
       getDepositable();
@@ -368,6 +379,7 @@ export default function YieldPage({ params }) {
                           ].approveWithdraw(
                             wallets[0],
                             yieldDetails.chainId,
+                            yieldDetails.asset.address,
                             yieldDetails.contractAddress,
                             withdrawAmount
                           );
