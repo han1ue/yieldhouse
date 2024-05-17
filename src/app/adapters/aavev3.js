@@ -100,6 +100,8 @@ export async function deposit(privyWallet, chainId, contractAddress, amount) {
   });
 
   console.log("hash", hash);
+
+  return hash;
 }
 
 export async function depositable(privyWallet, chainId, token) {
@@ -212,6 +214,8 @@ export async function withdraw(privyWallet, chainId, contractAddress, amount) {
   });
 
   console.log("hash", hash);
+
+  return hash;
 }
 
 export async function withdrawable(privyWallet, chainId, contractAddress) {

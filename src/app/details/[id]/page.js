@@ -30,7 +30,13 @@ import { adapterRegistry } from "../../adapters/adapterRegistry";
 import { useTestnetContext } from "../../components/TestnetContext";
 import React from "react";
 import { Line } from "react-chartjs-2";
-import { createWalletClient, custom, extractChain, formatEther } from "viem";
+import {
+  createWalletClient,
+  custom,
+  extractChain,
+  formatEther,
+  createPublicClient,
+} from "viem";
 import { faker } from "@faker-js/faker";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
 import ApyChart from "../../components/apyChart";
@@ -51,6 +57,60 @@ export default function YieldPage({ params }) {
   const yieldDetails = yieldsData[params.id];
   const claimAvailable = false;
 
+  async function getDepositable() {
+    console.log("getDepositable");
+    const depositable = await adapterRegistry[
+      yieldDetails.protocol.toLowerCase()
+    ].depositable(
+      wallets[0],
+      yieldDetails.chainId,
+      yieldDetails.contractAddress
+    );
+    setDepositable(depositable);
+
+    const approvedDepositResult = adapterRegistry[
+      yieldDetails.protocol.toLowerCase()
+    ].approvedDeposit(
+      wallets[0],
+      yieldDetails.chainId,
+      yieldDetails.asset.address,
+      yieldDetails.contractAddress,
+      depositable
+    );
+
+    console.log("approvedDepositResult", approvedDepositResult);
+    // Get approval status
+    setDepositApproved(depositable > 0 && approvedDepositResult);
+  }
+
+  async function getWithdrawable() {
+    console.log("getWithdrawable");
+    const withdrawable = await adapterRegistry[
+      yieldDetails.protocol.toLowerCase()
+    ].withdrawable(
+      wallets[0],
+      yieldDetails.chainId,
+      yieldDetails.contractAddress
+    );
+    setWithdrawable(withdrawable);
+
+    console.log("withdrawable", withdrawable);
+
+    const approvedWithdrawResult = await adapterRegistry[
+      yieldDetails.protocol.toLowerCase()
+    ].approvedWithdraw(
+      wallets[0],
+      yieldDetails.chainId,
+      yieldDetails.asset.address,
+      yieldDetails.contractAddress,
+      withdrawable
+    );
+
+    console.log("approvedWithdrawResult", approvedWithdrawResult);
+
+    setWithdrawApproved(withdrawable > 0 && approvedWithdrawResult);
+  }
+
   useEffect(() => {
     async function getProvider() {
       console.log("ready", ready);
@@ -58,60 +118,6 @@ export default function YieldPage({ params }) {
       var walletZero = wallets[0];
       console.log("walletZero", walletZero);
       setProvider(await walletZero.getEthereumProvider());
-    }
-
-    async function getDepositable() {
-      console.log("getDepositable");
-      const depositable = await adapterRegistry[
-        yieldDetails.protocol.toLowerCase()
-      ].depositable(
-        wallets[0],
-        yieldDetails.chainId,
-        yieldDetails.contractAddress
-      );
-      setDepositable(depositable);
-
-      const approvedDepositResult = adapterRegistry[
-        yieldDetails.protocol.toLowerCase()
-      ].approvedDeposit(
-        wallets[0],
-        yieldDetails.chainId,
-        yieldDetails.asset.address,
-        yieldDetails.contractAddress,
-        depositable
-      );
-
-      console.log("approvedDepositResult", approvedDepositResult);
-      // Get approval status
-      setDepositApproved(depositable > 0 && approvedDepositResult);
-    }
-
-    async function getWithdrawable() {
-      console.log("getWithdrawable");
-      const withdrawable = await adapterRegistry[
-        yieldDetails.protocol.toLowerCase()
-      ].withdrawable(
-        wallets[0],
-        yieldDetails.chainId,
-        yieldDetails.contractAddress
-      );
-      setWithdrawable(withdrawable);
-
-      console.log("withdrawable", withdrawable);
-
-      const approvedWithdrawResult = await adapterRegistry[
-        yieldDetails.protocol.toLowerCase()
-      ].approvedWithdraw(
-        wallets[0],
-        yieldDetails.chainId,
-        yieldDetails.asset.address,
-        yieldDetails.contractAddress,
-        withdrawable
-      );
-
-      console.log("approvedWithdrawResult", approvedWithdrawResult);
-
-      setWithdrawApproved(withdrawable > 0 && approvedWithdrawResult);
     }
 
     if (ready && wallets.length > 0) {
@@ -284,9 +290,9 @@ export default function YieldPage({ params }) {
                     <Separator size="4" />
                     {depositApproved ? (
                       <Button
-                        onClick={() => {
+                        onClick={async () => {
                           switchChain();
-                          adapterRegistry[
+                          const hash = adapterRegistry[
                             yieldDetails.protocol.toLowerCase()
                           ].deposit(
                             wallets[0],
@@ -294,6 +300,22 @@ export default function YieldPage({ params }) {
                             yieldDetails.contractAddress,
                             depositAmount
                           );
+                          const publicClient = createPublicClient({
+                            chain: extractChain({
+                              chains: [mainnet, base, arbitrum, sepolia],
+                              id: yieldDetails.chainId,
+                            }),
+                            transport: custom(provider),
+                          });
+
+                          const transaction =
+                            await publicClient.waitForTransactionReceipt({
+                              hash,
+                            });
+                          console.log("deposit-tx", transaction);
+
+                          getDepositable();
+                          getWithdrawable();
                         }}
                         variant="classic"
                       >
@@ -355,9 +377,9 @@ export default function YieldPage({ params }) {
                     <Separator size="4" />
                     {withdrawApproved ? (
                       <Button
-                        onClick={() => {
+                        onClick={async () => {
                           switchChain();
-                          adapterRegistry[
+                          const hash = adapterRegistry[
                             yieldDetails.protocol.toLowerCase()
                           ].withdraw(
                             wallets[0],
@@ -365,6 +387,23 @@ export default function YieldPage({ params }) {
                             yieldDetails.contractAddress,
                             withdrawAmount
                           );
+
+                          const publicClient = createPublicClient({
+                            chain: extractChain({
+                              chains: [mainnet, base, arbitrum, sepolia],
+                              id: yieldDetails.chainId,
+                            }),
+                            transport: custom(provider),
+                          });
+
+                          const transaction =
+                            await publicClient.waitForTransactionReceipt({
+                              hash,
+                            });
+                          console.log("withdraw-tx", transaction);
+
+                          getDepositable();
+                          getWithdrawable();
                         }}
                         variant="classic"
                       >
