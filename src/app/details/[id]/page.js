@@ -33,6 +33,7 @@ import { Line } from "react-chartjs-2";
 import {
   createWalletClient,
   custom,
+  http,
   extractChain,
   formatEther,
   createPublicClient,
@@ -296,7 +297,7 @@ export default function YieldPage({ params }) {
                       <Button
                         onClick={async () => {
                           switchChain();
-                          const hash = adapterRegistry[
+                          const hash = await adapterRegistry[
                             yieldDetails.protocol.toLowerCase()
                           ].deposit(
                             wallets[0],
@@ -306,18 +307,24 @@ export default function YieldPage({ params }) {
                           );
                           console.log("hash", hash);
                           const publicClient = createPublicClient({
+                            transport: custom(provider),
                             chain: extractChain({
                               chains: [mainnet, base, arbitrum, sepolia],
                               id: yieldDetails.chainId,
                             }),
-                            transport: custom(provider),
                           });
 
-                          const transaction =
+                          console.log("publicClient", publicClient);
+                          console.log("waiting for tx receipt");
+
+                          const receipt =
                             await publicClient.waitForTransactionReceipt({
                               hash,
                             });
-                          console.log("deposit-tx", transaction);
+
+                          console.log("receipt", receipt);
+
+                          console.log("deposit-tx done");
 
                           getDepositable();
                           getWithdrawable();
@@ -384,7 +391,7 @@ export default function YieldPage({ params }) {
                       <Button
                         onClick={async () => {
                           switchChain();
-                          const hash = adapterRegistry[
+                          const hash = await adapterRegistry[
                             yieldDetails.protocol.toLowerCase()
                           ].withdraw(
                             wallets[0],
@@ -392,20 +399,26 @@ export default function YieldPage({ params }) {
                             yieldDetails.contractAddress,
                             withdrawAmount
                           );
-
+                          console.log("hash", hash);
                           const publicClient = createPublicClient({
+                            transport: custom(provider),
                             chain: extractChain({
                               chains: [mainnet, base, arbitrum, sepolia],
                               id: yieldDetails.chainId,
                             }),
-                            transport: custom(provider),
                           });
 
-                          const transaction =
+                          console.log("publicClient", publicClient);
+                          console.log("waiting for tx receipt");
+
+                          const receipt =
                             await publicClient.waitForTransactionReceipt({
                               hash,
                             });
-                          console.log("withdraw-tx", transaction);
+
+                          console.log("receipt", receipt);
+
+                          console.log("deposit-tx done");
 
                           getDepositable();
                           getWithdrawable();
