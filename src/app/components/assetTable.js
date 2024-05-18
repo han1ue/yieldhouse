@@ -86,7 +86,7 @@ export default function AssetTable({
                 </Flex>
               </Flex>
               <Text size="1" weight="light">
-                {row.protocol + " • " + row.chain}{" "}
+                {row.protocol + " • " + row.chain.name}{" "}
               </Text>
             </Table.RowHeaderCell>
             <Table.Cell>{row.apy * 100 + "%"}</Table.Cell>
@@ -96,9 +96,11 @@ export default function AssetTable({
               <RiskIndicator risk={row.risk} size={32} textSize={48} />
             </Table.Cell>
             <Table.Cell>
-              <Link href={"/details/" + index}>
-                <Button variant="soft">Deposit</Button>
-              </Link>
+              <Flex direction="row" width="90%" justify="end">
+                <Link href={"/details/" + index}>
+                  <Button variant="soft">Deposit</Button>
+                </Link>
+              </Flex>
             </Table.Cell>
           </Table.Row>
         ))}

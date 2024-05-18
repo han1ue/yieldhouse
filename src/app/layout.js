@@ -40,7 +40,7 @@ export default function RootLayout({ children }) {
               <TestnetContextProvider testnet={testnet}>
                 {children}
               </TestnetContextProvider>
-              <Flex direction="row" justify="between" mx="2" mt="8">
+              <Flex direction="row" justify="between" mx="2" mb="2" mt="8">
                 <Text size="1">Last update: 6 hours ago</Text>
                 {!pathname.startsWith("/details/") && (
                   <Flex direction="row" align="center" gapX="1">

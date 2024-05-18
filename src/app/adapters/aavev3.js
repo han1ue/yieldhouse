@@ -105,17 +105,18 @@ export async function deposit(privyWallet, chainId, contractAddress, amount) {
 }
 
 export async function depositable(privyWallet, chainId, token) {
+  const provider = await privyWallet.getEthereumProvider();
+  const publicClient = createPublicClient({
+    chain: extractChain({
+      chains: [mainnet, base, arbitrum, sepolia],
+      id: chainId,
+    }),
+    transport: custom(provider),
+  });
   // Token is ETH
   if (token == ETH_MOCK_ADDRESS) {
     console.log("ETH");
-    const provider = await privyWallet.getEthereumProvider();
-    const publicClient = createPublicClient({
-      chain: extractChain({
-        chains: [mainnet, base, arbitrum, sepolia],
-        id: chainId,
-      }),
-      transport: custom(provider),
-    });
+
     console.log("chainId", chainId);
     console.log("publicClient", publicClient);
     console.log("privyWallet.address", privyWallet.address);
@@ -241,7 +242,7 @@ export async function withdrawable(privyWallet, chainId, contractAddress) {
     console.log("reserves", reserves);
 
     aTokenAddress = reserves.reservesData.find(
-      (reserve) => reserve.underlyingAsset == contractAddress
+      (reserve) => reserve.underlyingAsset == contractAddress.toLowerCase()
     ).aTokenAddress;
   }
 
