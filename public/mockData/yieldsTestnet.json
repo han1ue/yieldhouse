@@ -9,7 +9,10 @@
       "chainId": 11155111
     },
     "protocol": "AAVEV3",
-    "apy": 0.2113,
+    "apy": {
+      "value": 0.2113,
+      "type": "variable"
+    },
     "tvl": 73000,
     "type": "Lending",
     "risk": 2,
@@ -26,7 +29,10 @@
       "chainId": 11155111
     },
     "protocol": "AAVEV3",
-    "apy": 0.423,
+    "apy": {
+      "value": 0.423,
+      "type": "variable"
+    },
     "tvl": 355000,
     "type": "Lending",
     "risk": 2,

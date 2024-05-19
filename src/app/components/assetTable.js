@@ -7,6 +7,7 @@ import {
   Grid,
   TextField,
   Table,
+  Badge,
   Box,
 } from "@radix-ui/themes";
 import yields from "/public/mockData/yields.json";
@@ -89,7 +90,16 @@ export default function AssetTable({
                 {row.protocol + " • " + row.chain.name}{" "}
               </Text>
             </Table.RowHeaderCell>
-            <Table.Cell>{row.apy * 100 + "%"}</Table.Cell>
+            <Table.Cell>
+              <Flex direction="column" gap="1">
+                <Flex>{row.apy.value * 100 + "%"}</Flex>
+                <Flex>
+                  <Badge variant="soft" color="blue" size="1" radius="large">
+                    {row.apy.type}
+                  </Badge>
+                </Flex>
+              </Flex>
+            </Table.Cell>
             <Table.Cell>{row.tvl + " $"}</Table.Cell>
             <Table.Cell>{row.type}</Table.Cell>
             <Table.Cell>

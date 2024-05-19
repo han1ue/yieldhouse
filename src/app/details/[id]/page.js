@@ -69,19 +69,21 @@ export default function YieldPage({ params }) {
     );
     setDepositable(depositable);
 
-    const approvedDepositResult = await adapterRegistry[
-      yieldDetails.protocol.toLowerCase()
-    ].approvedDeposit(
-      wallets[0],
-      yieldDetails.chain.chainId,
-      yieldDetails.asset.address,
-      yieldDetails.contractAddress,
-      depositable
-    );
+    if (depositable > 0) {
+      const approvedDepositResult = await adapterRegistry[
+        yieldDetails.protocol.toLowerCase()
+      ].approvedDeposit(
+        wallets[0],
+        yieldDetails.chain.chainId,
+        yieldDetails.asset.address,
+        yieldDetails.contractAddress,
+        depositable
+      );
 
-    console.log("approvedDepositResult", approvedDepositResult);
-    // Get approval status
-    setDepositApproved(depositable > 0 && approvedDepositResult);
+      console.log("approvedDepositResult", approvedDepositResult);
+      // Get approval status
+      setDepositApproved(approvedDepositResult);
+    }
   }
 
   async function getWithdrawable() {
@@ -97,19 +99,21 @@ export default function YieldPage({ params }) {
 
     console.log("withdrawable", withdrawable);
 
-    const approvedWithdrawResult = await adapterRegistry[
-      yieldDetails.protocol.toLowerCase()
-    ].approvedWithdraw(
-      wallets[0],
-      yieldDetails.chain.chainId,
-      yieldDetails.asset.address,
-      yieldDetails.contractAddress,
-      withdrawable
-    );
+    if (withdrawable > 0) {
+      const approvedWithdrawResult = await adapterRegistry[
+        yieldDetails.protocol.toLowerCase()
+      ].approvedWithdraw(
+        wallets[0],
+        yieldDetails.chain.chainId,
+        yieldDetails.asset.address,
+        yieldDetails.contractAddress,
+        withdrawable
+      );
 
-    console.log("approvedWithdrawResult", approvedWithdrawResult);
+      console.log("approvedWithdrawResult", approvedWithdrawResult);
 
-    setWithdrawApproved(withdrawable > 0 && approvedWithdrawResult);
+      setWithdrawApproved(approvedWithdrawResult);
+    }
   }
 
   useEffect(() => {
@@ -555,7 +559,7 @@ export default function YieldPage({ params }) {
               <Flex direction="column" gap="2">
                 <Flex direction="row" gapX="1" align="baseline">
                   <Text ml="2" size="7" weight="medium">
-                    {yieldDetails.apy * 100 + "%"}
+                    {yieldDetails.apy.value * 100 + "%"}
                   </Text>
                   <Text size="1" weight="light">
                     {" "}
