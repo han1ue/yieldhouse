@@ -35,7 +35,8 @@ import {
   custom,
   http,
   extractChain,
-  formatEther,
+  formatUnits,
+  parseUnits,
   createPublicClient,
 } from "viem";
 import { faker } from "@faker-js/faker";
@@ -65,8 +66,9 @@ export default function YieldPage({ params }) {
     ].depositable(
       wallets[0],
       yieldDetails.chain.chainId,
-      yieldDetails.contractAddress
+      yieldDetails.asset.address
     );
+    console.log("depositable", depositable);
     setDepositable(depositable);
 
     if (depositable > 0) {
@@ -193,8 +195,8 @@ export default function YieldPage({ params }) {
                   yieldDetails.protocol.toLowerCase() +
                   ".svg"
                 }
-                width={80}
-                height={60}
+                width={100}
+                height={80}
               />
             </Flex>
             <Separator size="3" orientation="vertical" />
@@ -250,7 +252,7 @@ export default function YieldPage({ params }) {
                   </Callout.Icon>
                   <Callout.Text>
                     {wallets[0]
-                      ? `Please switch to the ${yieldDetails.chain.name} network to see your balance.`
+                      ? `Switch to the ${yieldDetails.chain.name} network to see your balance.`
                       : "Connect your wallet to see your balance."}
                   </Callout.Text>
                   {wallets[0] && (
@@ -291,7 +293,12 @@ export default function YieldPage({ params }) {
                       </TextField.Root>
                       <Text size="1" weight="light">
                         {"Balance: " +
-                          Number(formatEther(depositable)).toFixed(4) +
+                          Number(
+                            formatUnits(
+                              depositable,
+                              yieldDetails.asset.decimals
+                            )
+                          ).toFixed(4) +
                           " " +
                           yieldDetails.asset.name}
                       </Text>
@@ -299,7 +306,11 @@ export default function YieldPage({ params }) {
                     <Separator size="4" />
                     {depositApproved ? (
                       <Button
-                        disabled={!depositApproved}
+                        // disabled={
+                        //   !depositApproved ||
+                        //   depositAmount == 0 ||
+                        //   depositAmount > formatUnits(depositable,yieldDetails.asset.decimals)
+                        // }
                         onClick={async () => {
                           switchChain();
                           const hash = await adapterRegistry[
@@ -308,7 +319,10 @@ export default function YieldPage({ params }) {
                             wallets[0],
                             yieldDetails.chain.chainId,
                             yieldDetails.contractAddress,
-                            depositAmount
+                            parseUnits(
+                              depositAmount,
+                              yieldDetails.asset.decimals
+                            )
                           );
                           console.log("hash", hash);
                           const publicClient = createPublicClient({
@@ -408,7 +422,12 @@ export default function YieldPage({ params }) {
                       </TextField.Root>
                       <Text size="1" weight="light">
                         {"Balance: " +
-                          Number(formatEther(withdrawable)).toFixed(6) +
+                          Number(
+                            formatUnits(
+                              withdrawable,
+                              yieldDetails.asset.decimals
+                            )
+                          ).toFixed(6) +
                           " " +
                           yieldDetails.asset.name}
                       </Text>
@@ -416,7 +435,15 @@ export default function YieldPage({ params }) {
                     <Separator size="4" />
                     {withdrawApproved ? (
                       <Button
-                        disabled={!withdrawApproved}
+                        disabled={
+                          !withdrawApproved ||
+                          withdrawAmount == 0 ||
+                          withdrawAmount >
+                            formatUnits(
+                              withdrawable,
+                              yieldDetails.asset.decimals
+                            )
+                        }
                         onClick={async () => {
                           switchChain();
                           const hash = await adapterRegistry[

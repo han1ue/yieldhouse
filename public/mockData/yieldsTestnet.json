@@ -2,7 +2,8 @@
   {
     "asset": {
       "name": "ETH",
-      "address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE"
+      "address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+      "decimals": 18
     },
     "chain": {
       "name": "Sepolia",
@@ -22,7 +23,8 @@
   {
     "asset": {
       "name": "AAVE",
-      "address": "0x88541670E55cC00bEEFD87eB59EDd1b7C511AC9a"
+      "address": "0x88541670E55cC00bEEFD87eB59EDd1b7C511AC9a",
+      "decimals": 18
     },
     "chain": {
       "name": "Sepolia",

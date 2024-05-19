@@ -2,7 +2,8 @@
   {
     "asset": {
       "name": "aUSDC",
-      "address": "0x724dc807b04555b71ed48a6896b6f41593b8c637"
+      "address": "0x724dc807b04555b71ed48a6896b6f41593b8c637",
+      "decimals": 6
     },
     "chain": {
       "name": "Arbitrum",
