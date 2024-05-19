@@ -30,7 +30,7 @@ function getWalletClient(address, chainId, provider) {
   });
 }
 
-export async function approvedDeposit(
+export async function isDepositApproved(
   privyWallet,
   chainId,
   token,
@@ -139,7 +139,7 @@ export async function depositable(privyWallet, chainId, token) {
   }
 }
 
-export async function approvedWithdraw(
+export async function isWithdrawApproved(
   privyWallet,
   chainId,
   token,
@@ -160,9 +160,9 @@ export async function approvedWithdraw(
     aTokenAddress: token == ETH_MOCK_ADDRESS && addressBook.ASSETS.WETH.A_TOKEN,
   });
 
-  console.log("approvedWithdraw:tx", tx);
+  console.log("isWithdrawApproved:tx", tx);
 
-  console.log("approvedWithdraw", tx.length == 1);
+  console.log("isWithdrawApproved", tx.length == 1);
 
   return tx.length == 1;
 }

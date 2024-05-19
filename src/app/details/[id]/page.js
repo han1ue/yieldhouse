@@ -70,9 +70,9 @@ export default function YieldPage({ params }) {
     setDepositable(depositable);
 
     if (depositable > 0) {
-      const approvedDepositResult = await adapterRegistry[
+      const isDepositApprovedResult = await adapterRegistry[
         yieldDetails.protocol.toLowerCase()
-      ].approvedDeposit(
+      ].isDepositApproved(
         wallets[0],
         yieldDetails.chain.chainId,
         yieldDetails.asset.address,
@@ -80,9 +80,9 @@ export default function YieldPage({ params }) {
         depositable
       );
 
-      console.log("approvedDepositResult", approvedDepositResult);
+      console.log("isDepositApprovedResult", isDepositApprovedResult);
       // Get approval status
-      setDepositApproved(approvedDepositResult);
+      setDepositApproved(isDepositApprovedResult);
     }
   }
 
@@ -100,9 +100,9 @@ export default function YieldPage({ params }) {
     console.log("withdrawable", withdrawable);
 
     if (withdrawable > 0) {
-      const approvedWithdrawResult = await adapterRegistry[
+      const isWithdrawApprovedResult = await adapterRegistry[
         yieldDetails.protocol.toLowerCase()
-      ].approvedWithdraw(
+      ].isWithdrawApproved(
         wallets[0],
         yieldDetails.chain.chainId,
         yieldDetails.asset.address,
@@ -110,9 +110,9 @@ export default function YieldPage({ params }) {
         withdrawable
       );
 
-      console.log("approvedWithdrawResult", approvedWithdrawResult);
+      console.log("isWithdrawApprovedResult", isWithdrawApprovedResult);
 
-      setWithdrawApproved(approvedWithdrawResult);
+      setWithdrawApproved(isWithdrawApprovedResult);
     }
   }
 
