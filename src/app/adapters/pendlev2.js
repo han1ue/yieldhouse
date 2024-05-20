@@ -9,6 +9,8 @@ import { mainnet, base, arbitrum, sepolia } from "viem/chains";
 import { useWallets } from "@privy-io/react-auth";
 
 const sdkServer = "https://api-v2.pendle.finance/sdk/api";
+const apiServer = "https://api-v2.pendle.finance/core";
+const pendleRouterV4 = "0x888888888889758F76e7103c6CbF23ABbF58F946";
 
 function getWalletClient(address, chainId, provider) {
   const chain = extractChain({
@@ -23,6 +25,18 @@ function getWalletClient(address, chainId, provider) {
   });
 }
 
+function getPublicClient(chainId, provider) {
+  const chain = extractChain({
+    chains: [mainnet, base, arbitrum, sepolia],
+    id: chainId,
+  });
+
+  return createPublicClient({
+    chain: chain,
+    transport: custom(provider),
+  });
+}
+
 export async function isDepositApproved(
   privyWallet,
   chainId,
@@ -30,7 +44,22 @@ export async function isDepositApproved(
   spender,
   amount
 ) {
-  return true;
+  const publicClient = getPublicClient(
+    chainId,
+    await privyWallet.getEthereumProvider()
+  );
+
+  const allowance = await publicClient.readContract({
+    address: token,
+    abi: erc20Abi,
+    functionName: "allowance",
+    args: [privyWallet.address, pendleRouterV4],
+  });
+
+  console.log("allowance", allowance);
+  console.log("amount", amount);
+
+  return allowance >= amount;
 }
 
 export async function approveDeposit(
@@ -39,23 +68,68 @@ export async function approveDeposit(
   token,
   spender,
   amount
-) {}
+) {
+  const walletClient = getWalletClient(
+    privyWallet.address,
+    chainId,
+    await privyWallet.getEthereumProvider()
+  );
+  const publicClient = getPublicClient(
+    chainId,
+    await privyWallet.getEthereumProvider()
+  );
+
+  const { request } = await publicClient.simulateContract({
+    account: privyWallet.address,
+    address: token,
+    abi: erc20Abi,
+    functionName: "approve",
+    args: [pendleRouterV4, amount],
+  });
+  const hash = await walletClient.writeContract(request);
+
+  return hash;
+}
 
 export async function deposit(privyWallet, chainId, contractAddress, amount) {
-  const endpoint = "/v1/swapExactTokenForPt";
+  const swapEndpoint = "/v1/swapExactTokenForPt";
+  const marketDetailsEndpoint =
+    "/v1/" + chainId.toString() + "/markets/" + contractAddress;
+  var tokenInAddr = "";
 
-  console.log("amount", amount);
+  try {
+    const response = await fetch(apiServer + marketDetailsEndpoint, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        // Add any other headers required by the API
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Error:", response.statusText);
+    }
+
+    const data = await response.json();
+    console.log("Data:", data);
+
+    tokenInAddr = data.underlyingAsset.address;
+    console.log("tokenInAddr", tokenInAddr);
+  } catch (error) {
+    console.error("Error:", error);
+    return;
+  }
 
   const params = new URLSearchParams({
     chainId: chainId.toString(),
     receiverAddr: privyWallet.address,
     marketAddr: contractAddress,
-    tokenInAddr: "0x0000000000000000000000000000000000000000", // Replace with actual token address if needed
+    tokenInAddr: tokenInAddr, // Replace with actual token address if needed
     amountTokenIn: amount.toString(),
     slippage: "0.005", // 0.5% slippage
   });
 
-  const url = sdkServer + endpoint + "?" + params.toString();
+  const url = sdkServer + swapEndpoint + "?" + params.toString();
 
   try {
     const response = await fetch(url, {
@@ -93,14 +167,10 @@ export async function deposit(privyWallet, chainId, contractAddress, amount) {
 }
 
 export async function depositable(privyWallet, chainId, token) {
-  const provider = await privyWallet.getEthereumProvider();
-  const publicClient = createPublicClient({
-    chain: extractChain({
-      chains: [mainnet, base, arbitrum, sepolia],
-      id: chainId,
-    }),
-    transport: custom(provider),
-  });
+  const publicClient = getPublicClient(
+    chainId,
+    await privyWallet.getEthereumProvider()
+  );
 
   console.log("token", token);
 

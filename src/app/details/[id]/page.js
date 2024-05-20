@@ -33,11 +33,11 @@ import { Line } from "react-chartjs-2";
 import {
   createWalletClient,
   custom,
-  http,
   extractChain,
   formatUnits,
   parseUnits,
   createPublicClient,
+  maxUint256,
 } from "viem";
 import { faker } from "@faker-js/faker";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
@@ -363,7 +363,7 @@ export default function YieldPage({ params }) {
                             yieldDetails.chain.chainId,
                             yieldDetails.asset.address,
                             yieldDetails.contractAddress,
-                            depositAmount
+                            maxUint256
                           );
 
                           console.log("hash", hash);
