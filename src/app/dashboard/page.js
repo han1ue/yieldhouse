@@ -14,12 +14,22 @@ import {
   Box,
 } from "@radix-ui/themes";
 import { useState } from "react";
-import positions from "/public/mockData/positions.json";
 import Image from "next/image";
 import Link from "next/link";
 import { useTestnetContext } from "../components/TestnetContext";
 
 export default function Dashboard() {
+  const positions = [
+    {
+      id: "1",
+      asset: "ETH",
+      chain: "Ethereum",
+      protocol: "AAVEV3",
+      value: 1000,
+      profit: 2000,
+    },
+  ];
+
   return (
     <Flex direction="column" gap="6">
       <Heading weight="medium">My current positions</Heading>

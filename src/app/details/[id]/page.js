@@ -30,6 +30,7 @@ import { adapterRegistry } from "../../adapters/adapterRegistry";
 import { useTestnetContext } from "../../components/TestnetContext";
 import React from "react";
 import { Line } from "react-chartjs-2";
+import moment from "moment";
 import {
   createWalletClient,
   custom,
@@ -58,6 +59,8 @@ export default function YieldPage({ params }) {
   const yieldsData = testnet ? yieldsTestnet : yields;
   const yieldDetails = yieldsData[params.id];
   const claimAvailable = false;
+  const maturityDate = new Date(yieldDetails.apy.maturityTimestamp * 1000);
+  const currentTimestamp = new Date().getTime() / 1000;
 
   async function getDepositable() {
     console.log("getDepositable");
@@ -71,21 +74,19 @@ export default function YieldPage({ params }) {
     console.log("depositable", depositable);
     setDepositable(depositable);
 
-    if (depositable > 0) {
-      const isDepositApprovedResult = await adapterRegistry[
-        yieldDetails.protocol.toLowerCase()
-      ].isDepositApproved(
-        wallets[0],
-        yieldDetails.chain.chainId,
-        yieldDetails.asset.address,
-        yieldDetails.contractAddress,
-        depositable
-      );
+    const isDepositApprovedResult = await adapterRegistry[
+      yieldDetails.protocol.toLowerCase()
+    ].isDepositApproved(
+      wallets[0],
+      yieldDetails.chain.chainId,
+      yieldDetails.asset.address,
+      yieldDetails.contractAddress,
+      depositable == 0 ? maxUint256 : depositable
+    );
 
-      console.log("isDepositApprovedResult", isDepositApprovedResult);
-      // Get approval status
-      setDepositApproved(isDepositApprovedResult);
-    }
+    console.log("isDepositApprovedResult", isDepositApprovedResult);
+    // Get approval status
+    setDepositApproved(isDepositApprovedResult);
   }
 
   async function getWithdrawable() {
@@ -101,21 +102,19 @@ export default function YieldPage({ params }) {
 
     console.log("withdrawable", withdrawable);
 
-    if (withdrawable > 0) {
-      const isWithdrawApprovedResult = await adapterRegistry[
-        yieldDetails.protocol.toLowerCase()
-      ].isWithdrawApproved(
-        wallets[0],
-        yieldDetails.chain.chainId,
-        yieldDetails.asset.address,
-        yieldDetails.contractAddress,
-        withdrawable
-      );
+    const isWithdrawApprovedResult = await adapterRegistry[
+      yieldDetails.protocol.toLowerCase()
+    ].isWithdrawApproved(
+      wallets[0],
+      yieldDetails.chain.chainId,
+      yieldDetails.asset.address,
+      yieldDetails.contractAddress,
+      withdrawable == 0 ? maxUint256 : withdrawable
+    );
 
-      console.log("isWithdrawApprovedResult", isWithdrawApprovedResult);
+    console.log("isWithdrawApprovedResult", isWithdrawApprovedResult);
 
-      setWithdrawApproved(isWithdrawApprovedResult);
-    }
+    setWithdrawApproved(isWithdrawApprovedResult);
   }
 
   useEffect(() => {
@@ -298,7 +297,7 @@ export default function YieldPage({ params }) {
                               depositable,
                               yieldDetails.asset.decimals
                             )
-                          ).toFixed(4) +
+                          ).toFixed(6) +
                           " " +
                           yieldDetails.asset.name}
                       </Text>
@@ -306,11 +305,15 @@ export default function YieldPage({ params }) {
                     <Separator size="4" />
                     {depositApproved ? (
                       <Button
-                        // disabled={
-                        //   !depositApproved ||
-                        //   depositAmount == 0 ||
-                        //   depositAmount > formatUnits(depositable,yieldDetails.asset.decimals)
-                        // }
+                        disabled={
+                          !depositApproved ||
+                          depositAmount == 0 ||
+                          depositAmount >
+                            formatUnits(
+                              depositable,
+                              yieldDetails.asset.decimals
+                            )
+                        }
                         onClick={async () => {
                           switchChain();
                           const hash = await adapterRegistry[
@@ -442,7 +445,8 @@ export default function YieldPage({ params }) {
                             formatUnits(
                               withdrawable,
                               yieldDetails.asset.decimals
-                            )
+                            ) ||
+                          currentTimestamp < yieldDetails.apy.maturityTimestamp
                         }
                         onClick={async () => {
                           switchChain();
@@ -452,7 +456,10 @@ export default function YieldPage({ params }) {
                             wallets[0],
                             yieldDetails.chain.chainId,
                             yieldDetails.contractAddress,
-                            withdrawAmount
+                            parseUnits(
+                              withdrawAmount,
+                              yieldDetails.asset.decimals
+                            )
                           );
                           console.log("hash", hash);
                           const publicClient = createPublicClient({
@@ -546,6 +553,18 @@ export default function YieldPage({ params }) {
                   </Flex>
                 </Card>
               )}
+              {yieldDetails.apy.type == "fixed" && (
+                <Card>
+                  <Flex direction="row" justify="between" align="center" mx="2">
+                    <Text size="2">Time until maturity:</Text>
+                    <Text size="3" weight="medium">
+                      {moment(
+                        yieldDetails.apy.maturityTimestamp * 1000
+                      ).fromNow(true)}
+                    </Text>
+                  </Flex>
+                </Card>
+              )}
               <Callout.Root size="1">
                 <Callout.Icon>
                   <InfoCircledIcon />
@@ -562,25 +581,33 @@ export default function YieldPage({ params }) {
               }}
             >
               <Card>
-                <Flex direction="row" gap="7" justify="center" my="1">
+                <Flex direction="row" gap="4" justify="center" my="1">
                   <Flex direction="column" gap="1">
                     <Text size="1">Chain</Text>
-                    <Text size="3" weight="medium">
+                    <Text size="2" weight="medium">
                       {yieldDetails.chain.name}
                     </Text>
                   </Flex>
                   <Flex direction="column" gap="1">
                     <Text size="1">TVL</Text>
-                    <Text size="3" weight="medium">
+                    <Text size="2" weight="medium">
                       {yieldDetails.tvl}
                     </Text>
                   </Flex>
                   <Flex direction="column" gap="1">
                     <Text size="1">Type</Text>
-                    <Text size="3" weight="medium">
+                    <Text size="2" weight="medium">
                       {yieldDetails.type}
                     </Text>
                   </Flex>
+                  {yieldDetails.apy.type == "fixed" && (
+                    <Flex direction="column" gap="1">
+                      <Text size="1">Maturity</Text>
+                      <Text size="2" weight="medium">
+                        {maturityDate.toLocaleDateString("en-GB")}
+                      </Text>
+                    </Flex>
+                  )}
                 </Flex>
               </Card>
               <Flex direction="column" gap="2">

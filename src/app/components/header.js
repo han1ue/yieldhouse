@@ -18,13 +18,13 @@ export default function Header() {
           <Heading weight="medium">yield.🏠</Heading>
         </Link>
         <Flex direction="row" mx="5" gapX="2">
-          {connected && (
+          {/* {connected && (
             <Link href="/dashboard">
               <Button size="1" variant="soft">
                 Dashboard
               </Button>
             </Link>
-          )}
+          )} */}
 
           <Link href="/">
             <Button size="1" variant="soft">

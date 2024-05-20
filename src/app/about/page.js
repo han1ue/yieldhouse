@@ -27,7 +27,7 @@ export default function About() {
     <Flex direction="column" gap="4">
       <Flex direction="column">
         <Heading size="3">Integrated DeFi Protocols</Heading>
-        <Text>AAVE</Text>
+        <Text>AAVE, Pendle</Text>
       </Flex>
       <Flex direction="column">
         <Heading size="3">About yield.house</Heading>

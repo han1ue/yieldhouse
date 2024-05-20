@@ -12,7 +12,8 @@
     "protocol": "PENDLEV2",
     "apy": {
       "value": 0.423,
-      "type": "fixed"
+      "type": "fixed",
+      "maturityTimestamp": 1724114387
     },
     "tvl": 355000,
     "type": "Stables",
@@ -33,7 +34,8 @@
     "protocol": "PENDLEV2",
     "apy": {
       "value": 0.046,
-      "type": "fixed"
+      "type": "fixed",
+      "maturityTimestamp": 1724114380
     },
     "tvl": 355000,
     "type": "LST",
