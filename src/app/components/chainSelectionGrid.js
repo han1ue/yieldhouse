@@ -19,9 +19,7 @@ export default function ChainSelectionGrid(props) {
 
   return (
     <>
-      {testnet ? (
-        <Text size="2">eth-sepolia</Text>
-      ) : (
+      {!testnet && (
         <Grid columns="3" gap="2">
           <Box align="center">
             <IconButton

@@ -11,6 +11,8 @@ import { PrivyProvider } from "@privy-io/react-auth";
 import Header from "./components/header";
 import { TestnetContextProvider } from "./components/TestnetContext";
 import { usePathname } from "next/navigation";
+import lastUpdate from "/public/mockData/lastUpdate.json";
+import moment from "moment";
 import { base, mainnet, sepolia, arbitrum } from "viem/chains";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -18,6 +20,7 @@ const inter = Inter({ subsets: ["latin"] });
 export default function RootLayout({ children }) {
   const pathname = usePathname();
   const [testnet, setTestnet] = useState(false);
+
   return (
     <html lang="en">
       <body className={inter.className}>
@@ -41,7 +44,10 @@ export default function RootLayout({ children }) {
                 {children}
               </TestnetContextProvider>
               <Flex direction="row" justify="between" mx="2" mb="2" mt="8">
-                <Text size="1">Last update: 6 hours ago</Text>
+                <Text size="1">
+                  {"Last updated: " +
+                    moment(lastUpdate.timestamp * 1000).fromNow()}
+                </Text>
                 {!pathname.startsWith("/details/") && (
                   <Flex direction="row" align="center" gapX="1">
                     <Text size="1" weight="light">
