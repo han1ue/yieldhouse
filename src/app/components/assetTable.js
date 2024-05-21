@@ -105,7 +105,7 @@ export default function AssetTable({
             </Table.RowHeaderCell>
             <Table.Cell>
               <Flex direction="column" gap="1">
-                <Flex>{row.apy.value * 100 + "%"}</Flex>
+                <Flex>{Number(row.apy.value * 100).toFixed(2) + "%"}</Flex>
                 <Flex>
                   <Badge variant="soft" color="blue" size="1" radius="large">
                     {row.apy.type}
@@ -113,7 +113,12 @@ export default function AssetTable({
                 </Flex>
               </Flex>
             </Table.Cell>
-            <Table.Cell>{row.tvl + " $"}</Table.Cell>
+            <Table.Cell>
+              {Intl.NumberFormat("en-US", {
+                notation: "compact",
+                maximumFractionDigits: 2,
+              }).format(row.tvl) + " $"}
+            </Table.Cell>
             <Table.Cell>{row.type}</Table.Cell>
             <Table.Cell>
               <RiskIndicator risk={row.risk} size={32} textSize={48} />

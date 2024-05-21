@@ -67,9 +67,9 @@ export default function Home() {
                 size="1"
                 color="gray"
                 variant={
-                  selectedAssetTypes.includes("Stable") ? "solid" : "soft"
+                  selectedAssetTypes.includes("Stables") ? "solid" : "soft"
                 }
-                onClick={() => handleClickAssetType("Stable")}
+                onClick={() => handleClickAssetType("Stables")}
               >
                 Stables
               </Button>
