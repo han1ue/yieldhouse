@@ -24,8 +24,6 @@ import {
   ExclamationTriangleIcon,
 } from "@radix-ui/react-icons";
 import RiskIndicator from "../../components/riskIndicator";
-import yields from "/public/mockData/yields.json";
-import yieldsTestnet from "/public/mockData/yieldsTestnet.json";
 import { adapterRegistry } from "../../adapters/adapterRegistry";
 import { useTestnetContext } from "../../components/TestnetContext";
 import React from "react";
@@ -56,10 +54,10 @@ export default function YieldPage({ params }) {
   const [withdrawable, setWithdrawable] = useState("0");
   const [withdrawAmount, setWithdrawAmount] = useState("0");
   const [withdrawApproved, setWithdrawApproved] = useState(false);
-  const yieldsData = testnet ? yieldsTestnet : yields;
-  const yieldDetails = yieldsData[params.id];
+  const [yieldsData, setYieldsData] = useState();
+  const [yieldDetails, setYieldDetails] = useState();
+  const [maturityDate, setMaturityDate] = useState();
   const claimAvailable = false;
-  const maturityDate = new Date(yieldDetails.apy.maturityTimestamp * 1000);
   const currentTimestamp = new Date().getTime() / 1000;
 
   async function getDepositable() {
@@ -126,7 +124,7 @@ export default function YieldPage({ params }) {
       setProvider(await walletZero.getEthereumProvider());
     }
 
-    if (ready && wallets.length > 0) {
+    if (ready && wallets.length > 0 && yieldDetails) {
       getProvider();
 
       // Get depositable amount
@@ -141,7 +139,33 @@ export default function YieldPage({ params }) {
         setInitialChainSwitch(true);
       }
     }
-  }, [ready, wallets]);
+  }, [ready, wallets, yieldDetails]);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const yieldsUrl = testnet
+          ? "https://raw.githubusercontent.com/jvalentee/yieldhouse-data/main/data/yieldsTestnet.json"
+          : "https://raw.githubusercontent.com/jvalentee/yieldhouse-data/main/data/yields.json";
+
+        const response = await fetch(yieldsUrl);
+        if (response.ok) {
+          const data = await response.json();
+          setYieldsData(data);
+          setYieldDetails(data[params.id]);
+          setMaturityDate(
+            new Date(data[params.id].apy.maturityTimestamp * 1000)
+          );
+        } else {
+          console.error("Failed to fetch yields data:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error fetching yields data:", error);
+      }
+    }
+
+    fetchData();
+  }, [testnet, params.id]);
 
   async function switchChain() {
     console.log("yieldDetails", yieldDetails);

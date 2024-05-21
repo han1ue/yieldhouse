@@ -10,8 +10,6 @@ import {
   Badge,
   Box,
 } from "@radix-ui/themes";
-import yields from "/public/mockData/yields.json";
-import yieldsTestnet from "/public/mockData/yieldsTestnet.json";
 import Image from "next/image";
 import "react-circular-progressbar/dist/styles.css";
 import Link from "next/link";
@@ -23,11 +21,26 @@ export default function AssetTable({
   selectedAssetTypes,
   searchQuery,
 }) {
+  const [yieldsData, setYieldsData] = useState([]);
   const [tableData, setTableData] = useState([]);
   const testnet = useTestnetContext();
 
+  // Fetch data when testnet context changes
   useEffect(() => {
-    const yieldsData = testnet ? yieldsTestnet : yields;
+    async function fetchData() {
+      const response = await fetch(
+        testnet
+          ? "https://raw.githubusercontent.com/jvalentee/yieldhouse-data/main/data/yieldsTestnet.json"
+          : "https://raw.githubusercontent.com/jvalentee/yieldhouse-data/main/data/yields.json"
+      );
+      const data = await response.json();
+      setYieldsData(data);
+    }
+
+    fetchData();
+  }, [testnet]);
+
+  useEffect(() => {
     // Filter data based on selected chains, asset types, and search query
     const filteredData = yieldsData.filter((asset) => {
       // Check if the asset's chain is included in selected chains
@@ -46,7 +59,7 @@ export default function AssetTable({
     });
 
     setTableData(filteredData);
-  }, [selectedChains, selectedAssetTypes, searchQuery, testnet]);
+  }, [selectedChains, selectedAssetTypes, searchQuery, yieldsData]);
 
   return (
     <Table.Root variant="ghost" size="1">

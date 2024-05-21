@@ -1,7 +1,7 @@
 "use client";
 
 import { Inter } from "next/font/google";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "@radix-ui/themes/styles.css";
 import "./globals.css";
 import { Theme } from "@radix-ui/themes";
@@ -11,7 +11,6 @@ import { PrivyProvider } from "@privy-io/react-auth";
 import Header from "./components/header";
 import { TestnetContextProvider } from "./components/TestnetContext";
 import { usePathname } from "next/navigation";
-import lastUpdate from "/public/mockData/lastUpdate.json";
 import moment from "moment";
 import { base, mainnet, sepolia, arbitrum } from "viem/chains";
 
@@ -20,6 +19,30 @@ const inter = Inter({ subsets: ["latin"] });
 export default function RootLayout({ children }) {
   const pathname = usePathname();
   const [testnet, setTestnet] = useState(false);
+  const [lastUpdate, setLastUpdate] = useState();
+
+  useEffect(() => {
+    async function fetchLastUpdate() {
+      try {
+        const response = await fetch(
+          "https://raw.githubusercontent.com/jvalentee/yieldhouse-data/main/data/lastUpdate.json"
+        );
+        if (response.ok) {
+          const data = await response.json();
+          setLastUpdate(data);
+        } else {
+          console.error(
+            "Failed to fetch lastUpdate.json:",
+            response.statusText
+          );
+        }
+      } catch (error) {
+        console.error("Error fetching lastUpdate.json:", error);
+      }
+    }
+
+    fetchLastUpdate();
+  }, []);
 
   return (
     <html lang="en">
@@ -46,7 +69,8 @@ export default function RootLayout({ children }) {
               <Flex direction="row" justify="between" mx="2" mb="2" mt="8">
                 <Text size="1">
                   {"Last updated: " +
-                    moment(lastUpdate.timestamp * 1000).fromNow()}
+                    (lastUpdate &&
+                      moment(lastUpdate.timestamp * 1000).fromNow())}
                 </Text>
                 {!pathname.startsWith("/details/") && (
                   <Flex direction="row" align="center" gapX="1">
