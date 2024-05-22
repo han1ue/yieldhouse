@@ -118,31 +118,37 @@ export default function AssetTable({
 
   const renderSortIcons = (key) => {
     return (
-      <Flex direction="column" align="center">
-        <ThickArrowUpIcon
-          style={{ cursor: "pointer" }}
+      <Flex direction="column" align="center" gap="0">
+        <IconButton
+          size="1"
+          variant="ghost"
+          color={
+            sortConfig.key == key && sortConfig.direction == "ascending"
+              ? "green"
+              : "gray"
+          }
           onClick={() => {
             const sortedData = sortData(tableData, key, "ascending");
             setTableData(sortedData);
           }}
+        >
+          <ThickArrowUpIcon weight={16} height={16} />
+        </IconButton>
+        <IconButton
+          size="1"
           color={
-            sortConfig.key === key && sortConfig.direction === "ascending"
+            sortConfig.key == key && sortConfig.direction == "descending"
               ? "green"
-              : "black"
+              : "gray"
           }
-        />
-        <ThickArrowDownIcon
-          style={{ cursor: "pointer" }}
+          variant="ghost"
           onClick={() => {
             const sortedData = sortData(tableData, key, "descending");
             setTableData(sortedData);
           }}
-          color={
-            sortConfig.key === key && sortConfig.direction === "descending"
-              ? "green"
-              : "black"
-          }
-        />
+        >
+          <ThickArrowDownIcon weight={16} height={16} />
+        </IconButton>
       </Flex>
     );
   };
