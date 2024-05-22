@@ -152,7 +152,7 @@ export default function YieldPage({ params }) {
         if (response.ok) {
           const data = await response.json();
           setYieldsData(data);
-          setYieldDetails(data[params.id]);
+          setYieldDetails(data.find((yieldData) => yieldData.id == params.id));
           setMaturityDate(
             new Date(data[params.id].apy.maturityTimestamp * 1000)
           );
@@ -644,7 +644,7 @@ export default function YieldPage({ params }) {
                 <Flex direction="row" justify="between" mx="2">
                   <Flex direction="row" gap="2">
                     <Flex direction="column" justify="end">
-                      <Text size="6" weight="medium" trim="end">
+                      <Text size="6" weight="medium">
                         {Number(yieldDetails.apy.value * 100).toFixed(2) + "%"}
                       </Text>
                     </Flex>
