@@ -223,11 +223,16 @@ export default function YieldPage({ params }) {
               />
             </Flex>
             <Separator size="3" orientation="vertical" />
-            <RiskIndicator
-              risk={yieldDetails.risk ? yieldDetails.risk : 1}
-              size={58}
-              textSize={38}
-            />
+            <Flex direction="column" gap="1" align="center">
+              <Text size="2" weight="medium">
+                Risk Level
+              </Text>
+              <RiskIndicator
+                risk={yieldDetails.risk ? yieldDetails.risk : 1}
+                size={48}
+                textSize={36}
+              />
+            </Flex>
           </Flex>
           <Flex
             direction={{
@@ -582,9 +587,10 @@ export default function YieldPage({ params }) {
                   <Flex direction="row" justify="between" align="center" mx="2">
                     <Text size="2">Time until maturity:</Text>
                     <Text size="3" weight="medium">
-                      {moment(
-                        yieldDetails.apy.maturityTimestamp * 1000
-                      ).fromNow(true)}
+                      {moment(yieldDetails.apy.maturityTimestamp * 1000).diff(
+                        moment(),
+                        "days"
+                      ) + " days"}
                     </Text>
                   </Flex>
                 </Card>
