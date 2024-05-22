@@ -86,13 +86,11 @@ export default function AssetTable({
       console.log("Sorting", Number(a), Number(b));
       if (Number(a) < Number(b)) {
         console.log("a < b");
-        console.log(Number(a), Number(b));
-        return direction == "ascending" ? 1 : -1;
+        return direction == "ascending" ? -1 : 1;
       }
       if (Number(a) > Number(b)) {
         console.log("a > b");
-        console.log(Number(a), Number(b));
-        return direction == "descending" ? 1 : -1;
+        return direction == "descending" ? -1 : 1;
       }
       return 0;
     });
