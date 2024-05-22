@@ -8,12 +8,21 @@ import {
 } from "viem";
 import { mainnet, base, arbitrum, sepolia } from "viem/chains";
 import { useWallets } from "@privy-io/react-auth";
-import { AaveV3Ethereum, AaveV3Sepolia } from "@bgd-labs/aave-address-book"; // import specific pool
-
+import {
+  AaveV3Ethereum,
+  AaveV3Sepolia,
+  AaveV3Arbitrum,
+  AaveV3Base,
+} from "@bgd-labs/aave-address-book";
 const ETH_MOCK_ADDRESS = "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE";
 
 function getAddressBook(chainId) {
-  const addressBooks = [AaveV3Ethereum, AaveV3Sepolia];
+  const addressBooks = [
+    AaveV3Ethereum,
+    AaveV3Sepolia,
+    AaveV3Arbitrum,
+    AaveV3Base,
+  ];
   return addressBooks.find((addressBook) => addressBook.CHAIN_ID === chainId);
 }
 
