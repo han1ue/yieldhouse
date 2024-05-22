@@ -11,6 +11,7 @@ import {
   Box,
 } from "@radix-ui/themes";
 import Image from "next/image";
+import { ThickArrowUpIcon, ThickArrowDownIcon } from "@radix-ui/react-icons";
 import "react-circular-progressbar/dist/styles.css";
 import Link from "next/link";
 import { useTestnetContext } from "../components/TestnetContext";
@@ -24,6 +25,10 @@ export default function AssetTable({
   const [yieldsData, setYieldsData] = useState([]);
   const [tableData, setTableData] = useState([]);
   const testnet = useTestnetContext();
+  const [sortConfig, setSortConfig] = useState({
+    key: null,
+    direction: null,
+  });
 
   // Fetch data when testnet context changes
   useEffect(() => {
@@ -64,15 +69,93 @@ export default function AssetTable({
     setTableData(filteredData);
   }, [selectedChains, selectedAssetTypes, searchQuery, yieldsData]);
 
+  const sortData = (key, direction) => {
+    setSortConfig({ key, direction });
+
+    console.log("Sorting by", key, direction);
+
+    const sortedData = [...tableData].sort((a, b) => {
+      if (key == "apy") {
+        a = a.apy.value;
+        b = b.apy.value;
+      } else {
+        a = a[key];
+        b = b[key];
+      }
+
+      console.log("Sorting", Number(a), Number(b));
+      if (Number(a) < Number(b)) {
+        console.log("a < b");
+        console.log(Number(a), Number(b));
+        return direction == "ascending" ? 1 : -1;
+      }
+      if (Number(a) > Number(b)) {
+        console.log("a > b");
+        console.log(Number(a), Number(b));
+        return direction == "descending" ? 1 : -1;
+      }
+      return 0;
+    });
+
+    setTableData(sortedData);
+  };
+
+  const renderSortIcons = (key) => {
+    return (
+      <Flex direction="column" align="center">
+        <ThickArrowUpIcon
+          style={{ cursor: "pointer" }}
+          onClick={() => sortData(key, "ascending")}
+          color={
+            sortConfig.key === key && sortConfig.direction === "ascending"
+              ? "green"
+              : "black"
+          }
+        />
+        <ThickArrowDownIcon
+          style={{ cursor: "pointer" }}
+          onClick={() => sortData(key, "descending")}
+          color={
+            sortConfig.key === key && sortConfig.direction === "descending"
+              ? "green"
+              : "black"
+          }
+        />
+      </Flex>
+    );
+  };
+
   return (
     <Table.Root variant="ghost" size="1">
       <Table.Header>
         <Table.Row>
-          <Table.ColumnHeaderCell>Asset</Table.ColumnHeaderCell>
-          <Table.ColumnHeaderCell>APY</Table.ColumnHeaderCell>
-          <Table.ColumnHeaderCell>TVL</Table.ColumnHeaderCell>
-          <Table.ColumnHeaderCell>Type</Table.ColumnHeaderCell>
-          <Table.ColumnHeaderCell>Risk</Table.ColumnHeaderCell>
+          <Table.ColumnHeaderCell>
+            <Flex mt="1">
+              <Text size="2">Asset</Text>
+            </Flex>
+          </Table.ColumnHeaderCell>
+          <Table.ColumnHeaderCell>
+            <Flex direction="row" align="center" gap="1">
+              <Text size="2">APY</Text>
+              <Box>{renderSortIcons("apy")}</Box>
+            </Flex>
+          </Table.ColumnHeaderCell>
+          <Table.ColumnHeaderCell>
+            <Flex direction="row" align="center" gap="1">
+              <Box>TVL</Box>
+              <Box>{renderSortIcons("tvl")}</Box>
+            </Flex>
+          </Table.ColumnHeaderCell>
+          <Table.ColumnHeaderCell>
+            <Flex mt="1">
+              <Text size="2">Type</Text>
+            </Flex>
+          </Table.ColumnHeaderCell>
+          <Table.ColumnHeaderCell>
+            <Flex mt="1">
+              <Text size="2">Risk</Text>
+            </Flex>
+          </Table.ColumnHeaderCell>
           <Table.ColumnHeaderCell></Table.ColumnHeaderCell>
         </Table.Row>
       </Table.Header>
@@ -125,13 +208,7 @@ export default function AssetTable({
             <Table.Cell>
               <Flex direction="column" gap="1" display="inline-flex">
                 {row.type.map((type, i) => (
-                  <Badge
-                    key={i}
-                    variant="soft"
-                    color="iris"
-                    size="1"
-                    radius="large"
-                  >
+                  <Badge key={i} variant="soft" color="iris" radius="large">
                     {type}
                   </Badge>
                 ))}
