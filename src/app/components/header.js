@@ -43,7 +43,7 @@ export default function Header() {
         variant={connected ? "outline" : "soft"}
         onClick={connected ? wallets[0]?.disconnect : connectOrCreateWallet}
       >
-        {connected ? "disconnect" : "connect"}
+        {connected ? "disconnect" : "connect wallet"}
       </Button>
     </Flex>
   );
