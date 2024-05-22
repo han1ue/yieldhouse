@@ -598,7 +598,7 @@ export default function YieldPage({ params }) {
             </Flex>
             <Flex
               direction="column"
-              gap="8"
+              gap="6"
               width={{
                 initial: "100%",
                 sm: "50%",
@@ -671,7 +671,7 @@ export default function YieldPage({ params }) {
                     ))}
                   </Flex>
                 </Flex>
-                <ApyChart />
+                <ApyChart historyData={yieldDetails.apy.history} />
               </Flex>
             </Flex>
           </Flex>

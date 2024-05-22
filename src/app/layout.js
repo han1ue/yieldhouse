@@ -12,6 +12,7 @@ import Header from "./components/header";
 import { TestnetContextProvider } from "./components/TestnetContext";
 import { usePathname } from "next/navigation";
 import moment from "moment";
+import { CheckCircledIcon } from "@radix-ui/react-icons";
 import { base, mainnet, sepolia, arbitrum } from "viem/chains";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -67,11 +68,14 @@ export default function RootLayout({ children }) {
                 {children}
               </TestnetContextProvider>
               <Flex direction="row" justify="between" mx="2" mb="2" mt="8">
-                <Text size="1">
-                  {"Last updated: " +
-                    (lastUpdate &&
-                      moment(lastUpdate.timestamp * 1000).fromNow())}
-                </Text>
+                <Flex direction="row" justify="center" gapX="1">
+                  <CheckCircledIcon size="1" color="green" />
+                  <Text size="1">
+                    {"Updated: " +
+                      (lastUpdate &&
+                        moment(lastUpdate.timestamp * 1000).fromNow())}
+                  </Text>
+                </Flex>
                 {!pathname.startsWith("/details/") && (
                   <Flex direction="row" align="center" gapX="1">
                     <Text size="1" weight="light">
