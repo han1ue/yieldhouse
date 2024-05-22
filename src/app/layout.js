@@ -14,6 +14,7 @@ import { usePathname } from "next/navigation";
 import moment from "moment";
 import { CheckCircledIcon } from "@radix-ui/react-icons";
 import { base, mainnet, sepolia, arbitrum } from "viem/chains";
+import { ThemeProvider, createTheme } from "@mui/material/styles";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -61,6 +62,12 @@ export default function RootLayout({ children }) {
     console.log("appearance", appearance);
   }, [appearance]);
 
+  const muiTheme = createTheme({
+    palette: {
+      mode: appearance,
+    },
+  });
+
   return (
     <html lang="en">
       <body className={inter.className}>
@@ -79,35 +86,37 @@ export default function RootLayout({ children }) {
             radius="medium"
             appearance={appearance}
           >
-            <Container maxWidth="640px" mx="2">
-              <Header appearance={appearance} setAppearance={setAppearance} />
-              <TestnetContextProvider testnet={testnet}>
-                {children}
-              </TestnetContextProvider>
-              <Flex direction="row" justify="between" mx="2" mb="2" mt="8">
-                <Flex direction="row" justify="center" gapX="1">
-                  <CheckCircledIcon size="1" color="green" />
-                  <Text size="1">
-                    {"Updated: " +
-                      (lastUpdate &&
-                        moment(lastUpdate.timestamp * 1000).fromNow())}
-                  </Text>
-                </Flex>
-                {!pathname.startsWith("/details/") && (
-                  <Flex direction="row" align="center" gapX="1">
-                    <Text size="1" weight="light">
-                      Testnet Mode
+            <ThemeProvider theme={muiTheme}>
+              <Container maxWidth="640px" mx="2">
+                <Header appearance={appearance} setAppearance={setAppearance} />
+                <TestnetContextProvider testnet={testnet}>
+                  {children}
+                </TestnetContextProvider>
+                <Flex direction="row" justify="between" mx="2" mb="2" mt="8">
+                  <Flex direction="row" justify="center" gapX="1">
+                    <CheckCircledIcon size="1" color="green" />
+                    <Text size="1">
+                      {"Updated: " +
+                        (lastUpdate &&
+                          moment(lastUpdate.timestamp * 1000).fromNow())}
                     </Text>
-
-                    <Switch
-                      size="1"
-                      checked={testnet}
-                      onCheckedChange={() => setTestnet(!testnet)}
-                    />
                   </Flex>
-                )}
-              </Flex>
-            </Container>
+                  {!pathname.startsWith("/details/") && (
+                    <Flex direction="row" align="center" gapX="1">
+                      <Text size="1" weight="light">
+                        Testnet Mode
+                      </Text>
+
+                      <Switch
+                        size="1"
+                        checked={testnet}
+                        onCheckedChange={() => setTestnet(!testnet)}
+                      />
+                    </Flex>
+                  )}
+                </Flex>
+              </Container>
+            </ThemeProvider>
           </Theme>
         </PrivyProvider>
       </body>
