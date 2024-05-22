@@ -199,7 +199,7 @@ export default function YieldPage({ params }) {
   return (
     <>
       {yieldDetails ? (
-        <Flex direction="column" gap="8">
+        <Flex direction="column">
           <Flex direction="row" justify="center" align="center" gap="6">
             <Flex direction="row" justify="center" align="center" gap="3">
               <Image
@@ -239,6 +239,7 @@ export default function YieldPage({ params }) {
               initial: "column-reverse",
               sm: "row",
             }}
+            mt="8"
             gap="8"
           >
             <Flex
@@ -595,12 +596,6 @@ export default function YieldPage({ params }) {
                   </Flex>
                 </Card>
               )}
-              <Callout.Root size="1">
-                <Callout.Icon>
-                  <InfoCircledIcon />
-                </Callout.Icon>
-                <Callout.Text size="1">{yieldDetails.description}</Callout.Text>
-              </Callout.Root>
             </Flex>
             <Flex
               direction="column"
@@ -680,6 +675,14 @@ export default function YieldPage({ params }) {
                 <ApyChart historyData={yieldDetails.apy.history} />
               </Flex>
             </Flex>
+          </Flex>
+          <Flex mx="2" mt="6">
+            <Callout.Root size="1">
+              <Callout.Icon>
+                <InfoCircledIcon />
+              </Callout.Icon>
+              <Callout.Text size="2">{yieldDetails.description}</Callout.Text>
+            </Callout.Root>
           </Flex>
         </Flex>
       ) : (

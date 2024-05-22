@@ -1,9 +1,10 @@
 import { Flex, Text, Heading, Button } from "@radix-ui/themes";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
 import Link from "next/link";
+import { DarkModeSwitch } from "react-toggle-dark-mode";
 
-export default function Header() {
-  const { connectOrCreateWallet, logout } = usePrivy();
+export default function Header(props) {
+  const { connectOrCreateWallet } = usePrivy();
   const { ready, wallets } = useWallets();
 
   console.log("wallets", wallets);
@@ -39,12 +40,21 @@ export default function Header() {
           </Link>
         </Flex>
       </Flex>
-      <Button
-        variant={connected ? "outline" : "soft"}
-        onClick={connected ? wallets[0]?.disconnect : connectOrCreateWallet}
-      >
-        {connected ? "disconnect" : "connect wallet"}
-      </Button>
+      <Flex direction="row" align="center" gapX="4">
+        <Button
+          variant={connected ? "outline" : "soft"}
+          onClick={connected ? wallets[0]?.disconnect : connectOrCreateWallet}
+        >
+          {connected ? "disconnect" : "connect wallet"}
+        </Button>
+        <DarkModeSwitch
+          checked={props.appearance == "dark"}
+          onChange={() =>
+            props.setAppearance(props.appearance == "dark" ? "light" : "dark")
+          }
+          size={24}
+        />
+      </Flex>
     </Flex>
   );
 }

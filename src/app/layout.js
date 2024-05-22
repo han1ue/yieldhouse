@@ -20,9 +20,18 @@ const inter = Inter({ subsets: ["latin"] });
 export default function RootLayout({ children }) {
   const pathname = usePathname();
   const [testnet, setTestnet] = useState(false);
+  const [appearance, setAppearance] = useState();
   const [lastUpdate, setLastUpdate] = useState();
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedAppearance = localStorage.getItem("appearance");
+      if (storedAppearance) {
+        console.log("storedAppearance", storedAppearance);
+        setAppearance(storedAppearance);
+      }
+    }
+
     async function fetchLastUpdate() {
       try {
         const response = await fetch(
@@ -45,6 +54,13 @@ export default function RootLayout({ children }) {
     fetchLastUpdate();
   }, []);
 
+  useEffect(() => {
+    if (typeof window !== "undefined" && appearance) {
+      localStorage.setItem("appearance", appearance);
+    }
+    console.log("appearance", appearance);
+  }, [appearance]);
+
   return (
     <html lang="en">
       <body className={inter.className}>
@@ -61,9 +77,10 @@ export default function RootLayout({ children }) {
             panelBackground="solid"
             scaling="100%"
             radius="medium"
+            appearance={appearance}
           >
             <Container maxWidth="640px" mx="2">
-              <Header />
+              <Header appearance={appearance} setAppearance={setAppearance} />
               <TestnetContextProvider testnet={testnet}>
                 {children}
               </TestnetContextProvider>
