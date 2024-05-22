@@ -42,19 +42,22 @@ export default function AssetTable({
 
   useEffect(() => {
     // Filter data based on selected chains, asset types, and search query
-    const filteredData = yieldsData.filter((asset) => {
+    const filteredData = yieldsData.filter((yieldData) => {
       // Check if the asset's chain is included in selected chains
       const chainMatch =
-        selectedChains.length === 0 || selectedChains.includes(asset.chain);
+        selectedChains.length === 0 ||
+        selectedChains.includes(yieldData.chain.name);
       // Check if the asset's type is included in selected asset types
       const typeMatch =
         selectedAssetTypes.length === 0 ||
-        asset.type.some((type) => selectedAssetTypes.includes(type));
+        yieldData.type.some((type) => selectedAssetTypes.includes(type));
       // Check if the asset contains the search query in its name or chain
       const searchMatch =
         searchQuery === "" ||
-        asset.asset.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        asset.protocol.toLowerCase().includes(searchQuery.toLowerCase());
+        yieldData.asset.name
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()) ||
+        yieldData.protocol.toLowerCase().includes(searchQuery.toLowerCase());
       return chainMatch && typeMatch && searchMatch;
     });
 
