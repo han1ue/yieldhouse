@@ -34,8 +34,7 @@ export default function About() {
         <Text>
           yield.house is a platform that helps you find the yield opportunities.
           We provide a curated list of all the best yield opportunities in the
-          market. We also provide a dashboard that helps you track your
-          investments and monitor your portfolio.
+          market.
         </Text>
         <Text>
           The platform is built on top of the Privy protocol, which allows you
