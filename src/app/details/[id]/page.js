@@ -615,7 +615,10 @@ export default function YieldPage({ params }) {
                   <Flex direction="column" gap="1">
                     <Text size="1">TVL</Text>
                     <Text size="2" weight="medium">
-                      {yieldDetails.tvl}
+                      {Intl.NumberFormat("en-US", {
+                        notation: "compact",
+                        maximumFractionDigits: 2,
+                      }).format(yieldDetails.tvl) + " $"}
                     </Text>
                   </Flex>
                   <Flex direction="column" gap="1">
@@ -637,7 +640,7 @@ export default function YieldPage({ params }) {
               <Flex direction="column" gap="2">
                 <Flex direction="row" gapX="1" align="baseline">
                   <Text ml="2" size="7" weight="medium">
-                    {yieldDetails.apy.value * 100 + "%"}
+                    {Number(yieldDetails.apy.value * 100).toFixed(2) + "%"}
                   </Text>
                   <Text size="1" weight="light">
                     {" "}
