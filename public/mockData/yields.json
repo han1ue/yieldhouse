@@ -16,7 +16,7 @@
       "maturityTimestamp": 1724114387
     },
     "tvl": 355000,
-    "type": "Stables",
+    "type": ["Stables"],
     "risk": 7,
     "contractAddress": "0xba4a858d664ddb052158168db04afa3cff5cfcc8",
     "description": "aUSDC is a stablecoin pegged to the US Dollar and is issued by Aave. It is an interest-bearing stablecoin that is pegged to the US Dollar."
@@ -38,7 +38,7 @@
       "maturityTimestamp": 1724114380
     },
     "tvl": 355000,
-    "type": "LST",
+    "type": ["LST"],
     "risk": 7,
     "contractAddress": "0x08a152834de126d2ef83d612ff36e4523fd0017f",
     "description": "aUSDC is a stablecoin pegged to the US Dollar and is issued by Aave. It is an interest-bearing stablecoin that is pegged to the US Dollar."

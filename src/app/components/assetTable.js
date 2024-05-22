@@ -49,7 +49,7 @@ export default function AssetTable({
       // Check if the asset's type is included in selected asset types
       const typeMatch =
         selectedAssetTypes.length === 0 ||
-        selectedAssetTypes.includes(asset.type);
+        asset.type.some((type) => selectedAssetTypes.includes(type));
       // Check if the asset contains the search query in its name or chain
       const searchMatch =
         searchQuery === "" ||
