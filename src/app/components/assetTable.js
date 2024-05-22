@@ -239,9 +239,9 @@ export default function AssetTable({
                   </Table.RowHeaderCell>
                   <Table.Cell>
                     <Flex direction="column" gap="1">
-                      <Flex>
+                      <Text size="2">
                         {Number(row.apy.value * 100).toFixed(2) + "%"}
-                      </Flex>
+                      </Text>
                       <Flex>
                         <Badge
                           variant="soft"
