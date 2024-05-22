@@ -12,6 +12,7 @@ import {
   Grid,
   TextField,
   Separator,
+  Badge,
   Tooltip,
   RadioCards,
   Callout,
@@ -598,54 +599,78 @@ export default function YieldPage({ params }) {
             </Flex>
             <Flex
               direction="column"
-              gap="5"
+              gap="8"
               width={{
                 initial: "100%",
                 sm: "50%",
               }}
             >
-              <Card>
-                <Flex direction="row" gap="4" justify="center" my="1">
-                  <Flex direction="column" gap="1">
-                    <Text size="1">Chain</Text>
-                    <Text size="2" weight="medium">
-                      {yieldDetails.chain.name}
-                    </Text>
-                  </Flex>
-                  <Flex direction="column" gap="1">
-                    <Text size="1">TVL</Text>
-                    <Text size="2" weight="medium">
-                      {Intl.NumberFormat("en-US", {
-                        notation: "compact",
-                        maximumFractionDigits: 2,
-                      }).format(yieldDetails.tvl) + " $"}
-                    </Text>
-                  </Flex>
-                  <Flex direction="column" gap="1">
-                    <Text size="1">Type</Text>
-                    <Text size="2" weight="medium">
-                      {yieldDetails.type}
-                    </Text>
-                  </Flex>
-                  {yieldDetails.apy.type == "fixed" && (
-                    <Flex direction="column" gap="1">
-                      <Text size="1">Maturity</Text>
-                      <Text size="2" weight="medium">
-                        {maturityDate.toLocaleDateString("en-GB")}
+              <Flex direction="row" justify="center" align="center">
+                <Box
+                  width={{
+                    initial: "70%",
+                    sm: "100%",
+                  }}
+                >
+                  <Card>
+                    <Flex direction="row" gap="5" justify="center" my="1">
+                      <Flex direction="column" gap="1">
+                        <Text size="1">Chain</Text>
+                        <Text size="2" weight="medium">
+                          {yieldDetails.chain.name}
+                        </Text>
+                      </Flex>
+                      <Flex direction="column" gap="1">
+                        <Text size="1">TVL</Text>
+                        <Text size="2" weight="medium">
+                          {Intl.NumberFormat("en-US", {
+                            notation: "compact",
+                            maximumFractionDigits: 2,
+                          }).format(yieldDetails.tvl) + " $"}
+                        </Text>
+                      </Flex>
+                      {yieldDetails.apy.type == "fixed" && (
+                        <Flex direction="column" gap="1">
+                          <Text size="1">Maturity</Text>
+                          <Text size="2" weight="medium">
+                            {maturityDate.toLocaleDateString("en-GB")}
+                          </Text>
+                        </Flex>
+                      )}
+                    </Flex>
+                  </Card>
+                </Box>
+              </Flex>
+              <Flex direction="column" gap="4">
+                <Flex direction="row" justify="between" mx="2">
+                  <Flex direction="row" gap="2">
+                    <Flex direction="column" justify="end">
+                      <Text size="6" weight="medium" trim="end">
+                        {Number(yieldDetails.apy.value * 100).toFixed(2) + "%"}
                       </Text>
                     </Flex>
-                  )}
-                </Flex>
-              </Card>
-              <Flex direction="column" gap="2">
-                <Flex direction="row" gapX="1" align="baseline">
-                  <Text ml="2" size="7" weight="medium">
-                    {Number(yieldDetails.apy.value * 100).toFixed(2) + "%"}
-                  </Text>
-                  <Text size="1" weight="light">
-                    {" "}
-                    APY
-                  </Text>
+                    <Flex direction="column">
+                      <Text size="1" weight="light">
+                        {yieldDetails.apy.type}
+                      </Text>
+                      <Text size="1" weight="light" trim="end">
+                        APY
+                      </Text>
+                    </Flex>
+                  </Flex>
+                  <Flex direction="row" gap="1" align="center">
+                    {yieldDetails.type.map((type, i) => (
+                      <Badge
+                        key={i}
+                        variant="soft"
+                        size="1"
+                        color="iris"
+                        radius="large"
+                      >
+                        {type}
+                      </Badge>
+                    ))}
+                  </Flex>
                 </Flex>
                 <ApyChart />
               </Flex>
