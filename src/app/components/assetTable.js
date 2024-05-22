@@ -10,6 +10,7 @@ import {
   Badge,
   Box,
 } from "@radix-ui/themes";
+import moment from "moment";
 import Image from "next/image";
 import { ThickArrowUpIcon, ThickArrowDownIcon } from "@radix-ui/react-icons";
 import "react-circular-progressbar/dist/styles.css";
@@ -47,7 +48,7 @@ export default function AssetTable({
 
   useEffect(() => {
     // Filter data based on selected chains, asset types, and search query
-    const filteredData = yieldsData.filter((yieldData) => {
+    var filteredData = yieldsData.filter((yieldData) => {
       // Check if the asset's chain is included in selected chains
       const chainMatch =
         selectedChains.length === 0 ||
@@ -66,15 +67,25 @@ export default function AssetTable({
       return chainMatch && typeMatch && searchMatch;
     });
 
+    if (sortConfig.key) {
+      filteredData = sortData(
+        filteredData,
+        sortConfig.key,
+        sortConfig.direction
+      );
+    }
+
     setTableData(filteredData);
+
+    // Sort data if sortConfig is set
   }, [selectedChains, selectedAssetTypes, searchQuery, yieldsData]);
 
-  const sortData = (key, direction) => {
+  function sortData(data, key, direction) {
     setSortConfig({ key, direction });
 
     console.log("Sorting by", key, direction);
 
-    const sortedData = [...tableData].sort((a, b) => {
+    const sortedData = [...data].sort((a, b) => {
       if (key == "apy") {
         a = a.apy.value;
         b = b.apy.value;
@@ -95,15 +106,18 @@ export default function AssetTable({
       return 0;
     });
 
-    setTableData(sortedData);
-  };
+    return sortedData;
+  }
 
   const renderSortIcons = (key) => {
     return (
       <Flex direction="column" align="center">
         <ThickArrowUpIcon
           style={{ cursor: "pointer" }}
-          onClick={() => sortData(key, "ascending")}
+          onClick={() => {
+            const sortedData = sortData(tableData, key, "ascending");
+            setTableData(sortedData);
+          }}
           color={
             sortConfig.key === key && sortConfig.direction === "ascending"
               ? "green"
@@ -112,7 +126,10 @@ export default function AssetTable({
         />
         <ThickArrowDownIcon
           style={{ cursor: "pointer" }}
-          onClick={() => sortData(key, "descending")}
+          onClick={() => {
+            const sortedData = sortData(tableData, key, "descending");
+            setTableData(sortedData);
+          }}
           color={
             sortConfig.key === key && sortConfig.direction === "descending"
               ? "green"
@@ -121,6 +138,18 @@ export default function AssetTable({
         />
       </Flex>
     );
+  };
+
+  const formatTime = (timestamp) => {
+    const now = moment();
+    const end = moment(timestamp * 1000);
+    const daysDifference = end.diff(now, "days");
+
+    if (daysDifference >= 3) {
+      return `${daysDifference} days`;
+    } else {
+      return end.fromNow();
+    }
   };
 
   return (
@@ -172,13 +201,18 @@ export default function AssetTable({
                     height={24}
                   />
                 </Box>
-                <Flex direction="roq" align="start">
+                <Flex direction="row" align="start">
                   <Text size="3" weight="medium" ml="2" trim="start">
                     {row.asset.name}
                   </Text>
                   {row.type == "LP" && (
                     <Text size="1" color="gray" ml="1">
                       {"/ " + row.baseAsset}
+                    </Text>
+                  )}
+                  {row.apy.type == "fixed" && (
+                    <Text size="1" color="gray" ml="1">
+                      {"(" + formatTime(row.apy.maturityTimestamp) + ")"}
                     </Text>
                   )}
                 </Flex>

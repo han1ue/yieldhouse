@@ -28,7 +28,6 @@ import RiskIndicator from "../../components/riskIndicator";
 import { adapterRegistry } from "../../adapters/adapterRegistry";
 import { useTestnetContext } from "../../components/TestnetContext";
 import React from "react";
-import { Line } from "react-chartjs-2";
 import moment from "moment";
 import {
   createWalletClient,
