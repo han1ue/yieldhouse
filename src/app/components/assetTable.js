@@ -124,8 +124,14 @@ export default function AssetTable({
             </Table.Cell>
             <Table.Cell>
               <Flex direction="column" gap="1" display="inline-flex">
-                {row.type.map((type) => (
-                  <Badge variant="soft" color="iris" size="1" radius="large">
+                {row.type.map((type, i) => (
+                  <Badge
+                    key={i}
+                    variant="soft"
+                    color="iris"
+                    size="1"
+                    radius="large"
+                  >
                     {type}
                   </Badge>
                 ))}
