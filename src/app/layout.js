@@ -1,6 +1,7 @@
 "use client";
 
 import { Inter } from "next/font/google";
+import { Analytics } from "@vercel/analytics/react";
 import { useState, useEffect } from "react";
 import "@radix-ui/themes/styles.css";
 import "./globals.css";
@@ -92,6 +93,7 @@ export default function RootLayout({ children }) {
                 <Header appearance={appearance} setAppearance={setAppearance} />
                 <TestnetContextProvider testnet={testnet}>
                   {children}
+                  <Analytics />
                 </TestnetContextProvider>
                 <Flex
                   direction="row"
