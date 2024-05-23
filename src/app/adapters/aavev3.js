@@ -39,6 +39,18 @@ function getWalletClient(address, chainId, provider) {
   });
 }
 
+function getPublicClient(chainId, provider) {
+  const chain = extractChain({
+    chains: [mainnet, base, arbitrum, sepolia],
+    id: chainId,
+  });
+
+  return createPublicClient({
+    chain: chain,
+    transport: custom(provider),
+  });
+}
+
 export async function isDepositApproved(
   privyWallet,
   chainId,
@@ -48,19 +60,22 @@ export async function isDepositApproved(
 ) {
   const addressBook = getAddressBook(chainId);
 
-  const pool = new Pool(await privyWallet.getEthersProvider(), {
-    POOL: addressBook.POOL,
-    WETH_GATEWAY: addressBook.WETH_GATEWAY,
+  const publicClient = getPublicClient(
+    chainId,
+    await privyWallet.getEthereumProvider()
+  );
+
+  const allowance = await publicClient.readContract({
+    address: token,
+    abi: erc20Abi,
+    functionName: "allowance",
+    args: [privyWallet.address, addressBook.POOL],
   });
 
-  const tx = await pool.supply({
-    user: privyWallet.address,
-    reserve: token,
-    amount: amount,
-    onBehalfOf: privyWallet.address,
-  });
+  console.log("allowance", allowance);
+  console.log("amount", amount);
 
-  return tx.length == 1;
+  return allowance >= amount;
 }
 
 export async function approveDeposit(
@@ -70,7 +85,28 @@ export async function approveDeposit(
   spender,
   amount
 ) {
-  deposit(privyWallet, chainId, token, amount);
+  const addressBook = getAddressBook(chainId);
+
+  const walletClient = getWalletClient(
+    privyWallet.address,
+    chainId,
+    await privyWallet.getEthereumProvider()
+  );
+  const publicClient = getPublicClient(
+    chainId,
+    await privyWallet.getEthereumProvider()
+  );
+
+  const { request } = await publicClient.simulateContract({
+    account: privyWallet.address,
+    address: token,
+    abi: erc20Abi,
+    functionName: "approve",
+    args: [addressBook.POOL, amount],
+  });
+  const hash = await walletClient.writeContract(request);
+
+  return hash;
 }
 
 export async function deposit(privyWallet, chainId, contractAddress, amount) {
@@ -157,23 +193,41 @@ export async function isWithdrawApproved(
 ) {
   const addressBook = getAddressBook(chainId);
 
-  const pool = new Pool(await privyWallet.getEthersProvider(), {
-    POOL: addressBook.POOL,
-    WETH_GATEWAY: addressBook.WETH_GATEWAY,
+  const publicClient = getPublicClient(
+    chainId,
+    await privyWallet.getEthereumProvider()
+  );
+
+  const poolDataProvider = new UiPoolDataProvider({
+    uiPoolDataProviderAddress: addressBook.UI_POOL_DATA_PROVIDER,
+    provider: await privyWallet.getEthersProvider(),
+    chainId: chainId,
   });
 
-  const tx = await pool.withdraw({
-    user: privyWallet.address,
-    reserve: token,
-    amount: amount,
-    aTokenAddress: token == ETH_MOCK_ADDRESS && addressBook.ASSETS.WETH.A_TOKEN,
+  console.log("poolDataProvider", poolDataProvider);
+  console.log("UI_POOL_DATA_PROVIDER", addressBook.UI_POOL_DATA_PROVIDER);
+
+  const reserves = await poolDataProvider.getReservesHumanized({
+    lendingPoolAddressProvider: addressBook.POOL_ADDRESSES_PROVIDER,
   });
 
-  console.log("isWithdrawApproved:tx", tx);
+  console.log("reserves", reserves);
 
-  console.log("isWithdrawApproved", tx.length == 1);
+  const aTokenAddress = reserves.reservesData.find(
+    (reserve) => reserve.underlyingAsset == token.toLowerCase()
+  ).aTokenAddress;
 
-  return tx.length == 1;
+  const allowance = await publicClient.readContract({
+    address: aTokenAddress,
+    abi: erc20Abi,
+    functionName: "allowance",
+    args: [privyWallet.address, addressBook.POOL],
+  });
+
+  console.log("allowance", allowance);
+  console.log("amount", amount);
+
+  return allowance >= amount;
 }
 
 export async function approveWithdraw(
@@ -183,7 +237,47 @@ export async function approveWithdraw(
   spender,
   amount
 ) {
-  withdraw(privyWallet, chainId, token, amount);
+  const addressBook = getAddressBook(chainId);
+
+  const poolDataProvider = new UiPoolDataProvider({
+    uiPoolDataProviderAddress: addressBook.UI_POOL_DATA_PROVIDER,
+    provider: await privyWallet.getEthersProvider(),
+    chainId: chainId,
+  });
+
+  console.log("poolDataProvider", poolDataProvider);
+  console.log("UI_POOL_DATA_PROVIDER", addressBook.UI_POOL_DATA_PROVIDER);
+
+  const reserves = await poolDataProvider.getReservesHumanized({
+    lendingPoolAddressProvider: addressBook.POOL_ADDRESSES_PROVIDER,
+  });
+
+  console.log("reserves", reserves);
+
+  const aTokenAddress = reserves.reservesData.find(
+    (reserve) => reserve.underlyingAsset == token.toLowerCase()
+  ).aTokenAddress;
+
+  const walletClient = getWalletClient(
+    privyWallet.address,
+    chainId,
+    await privyWallet.getEthereumProvider()
+  );
+  const publicClient = getPublicClient(
+    chainId,
+    await privyWallet.getEthereumProvider()
+  );
+
+  const { request } = await publicClient.simulateContract({
+    account: privyWallet.address,
+    address: aTokenAddress,
+    abi: erc20Abi,
+    functionName: "approve",
+    args: [addressBook.POOL, amount],
+  });
+  const hash = await walletClient.writeContract(request);
+
+  return hash;
 }
 
 export async function withdraw(privyWallet, chainId, contractAddress, amount) {

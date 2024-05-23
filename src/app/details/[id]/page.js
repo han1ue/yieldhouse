@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import Image from "next/image";
 import {
   Flex,
@@ -17,6 +17,7 @@ import {
   RadioCards,
   Callout,
   Table,
+  Spinner,
   Box,
 } from "@radix-ui/themes";
 import { mainnet, base, arbitrum, sepolia } from "viem/chains";
@@ -38,7 +39,7 @@ import {
   createPublicClient,
   maxUint256,
 } from "viem";
-import { faker } from "@faker-js/faker";
+import { de, faker } from "@faker-js/faker";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
 import ApyChart from "../../components/apyChart";
 
@@ -57,6 +58,7 @@ export default function YieldPage({ params }) {
   const [yieldsData, setYieldsData] = useState();
   const [yieldDetails, setYieldDetails] = useState();
   const [maturityDate, setMaturityDate] = useState();
+  const [txConfirming, setTxConfirming] = useState(false);
   const claimAvailable = false;
   const currentTimestamp = new Date().getTime() / 1000;
 
@@ -71,7 +73,9 @@ export default function YieldPage({ params }) {
     );
     console.log("depositable", depositable);
     setDepositable(depositable);
+  }
 
+  async function getDepositApproved(amount) {
     const isDepositApprovedResult = await adapterRegistry[
       yieldDetails.protocol.toLowerCase()
     ].isDepositApproved(
@@ -79,10 +83,11 @@ export default function YieldPage({ params }) {
       yieldDetails.chain.chainId,
       yieldDetails.asset.address,
       yieldDetails.contractAddress,
-      depositable == 0 ? maxUint256 : depositable
+      amount
     );
 
     console.log("isDepositApprovedResult", isDepositApprovedResult);
+    console.log("amount", amount);
     // Get approval status
     setDepositApproved(isDepositApprovedResult);
   }
@@ -99,7 +104,9 @@ export default function YieldPage({ params }) {
     setWithdrawable(withdrawable);
 
     console.log("withdrawable", withdrawable);
+  }
 
+  async function getWithdrawApproved(amount) {
     const isWithdrawApprovedResult = await adapterRegistry[
       yieldDetails.protocol.toLowerCase()
     ].isWithdrawApproved(
@@ -107,13 +114,37 @@ export default function YieldPage({ params }) {
       yieldDetails.chain.chainId,
       yieldDetails.asset.address,
       yieldDetails.contractAddress,
-      withdrawable == 0 ? maxUint256 : withdrawable
+      amount
     );
 
     console.log("isWithdrawApprovedResult", isWithdrawApprovedResult);
 
     setWithdrawApproved(isWithdrawApprovedResult);
   }
+
+  useEffect(() => {
+    console.log("update depositAmount", depositAmount);
+
+    if (yieldDetails) {
+      getDepositApproved(
+        depositAmount > 0
+          ? parseUnits(depositAmount, yieldDetails.asset.decimals)
+          : 1
+      );
+    }
+  }, [depositAmount, yieldDetails]);
+
+  useEffect(() => {
+    console.log("update withdrawAmount", withdrawAmount);
+
+    if (yieldDetails) {
+      getWithdrawApproved(
+        withdrawAmount > 0
+          ? parseUnits(withdrawAmount, yieldDetails.asset.decimals)
+          : 1
+      );
+    }
+  }, [withdrawAmount, yieldDetails]);
 
   useEffect(() => {
     async function getProvider() {
@@ -218,7 +249,7 @@ export default function YieldPage({ params }) {
                   yieldDetails.protocol.toLowerCase() +
                   ".svg"
                 }
-                width={100}
+                width={120}
                 height={80}
               />
             </Flex>
@@ -336,7 +367,6 @@ export default function YieldPage({ params }) {
                     {depositApproved ? (
                       <Button
                         disabled={
-                          !depositApproved ||
                           depositAmount == 0 ||
                           depositAmount >
                             formatUnits(
@@ -357,7 +387,7 @@ export default function YieldPage({ params }) {
                               yieldDetails.asset.decimals
                             )
                           );
-                          console.log("hash", hash);
+
                           const publicClient = createPublicClient({
                             transport: custom(provider),
                             chain: extractChain({
@@ -368,11 +398,13 @@ export default function YieldPage({ params }) {
 
                           console.log("publicClient", publicClient);
                           console.log("waiting for tx receipt");
-
+                          setTxConfirming(true);
                           const receipt =
                             await publicClient.waitForTransactionReceipt({
                               hash,
                             });
+
+                          setTxConfirming(false);
 
                           console.log("receipt", receipt);
 
@@ -383,10 +415,11 @@ export default function YieldPage({ params }) {
                         }}
                         variant="classic"
                       >
-                        Deposit
+                        {txConfirming ? <Spinner /> : "Deposit"}
                       </Button>
                     ) : (
                       <Button
+                        disabled={depositAmount == 0}
                         onClick={async () => {
                           switchChain();
                           const hash = await adapterRegistry[
@@ -412,18 +445,19 @@ export default function YieldPage({ params }) {
 
                           console.log("waiting for tx receipt");
 
-                          const receipt =
-                            await publicClient.waitForTransactionReceipt({
-                              hash,
-                            });
+                          setTxConfirming(true);
 
-                          console.log("receipt", receipt);
+                          await publicClient.waitForTransactionReceipt({
+                            hash,
+                          });
 
-                          getDepositable();
+                          getDepositApproved(depositAmount);
+
+                          setTxConfirming(false);
                         }}
                         variant="classic"
                       >
-                        Approve
+                        {txConfirming ? <Spinner /> : "Approve"}
                       </Button>
                     )}
                   </Flex>
@@ -503,10 +537,14 @@ export default function YieldPage({ params }) {
                           console.log("publicClient", publicClient);
                           console.log("waiting for tx receipt");
 
+                          setTxConfirming(true);
+
                           const receipt =
                             await publicClient.waitForTransactionReceipt({
                               hash,
                             });
+
+                          setTxConfirming(false);
 
                           console.log("receipt", receipt);
 
@@ -517,10 +555,11 @@ export default function YieldPage({ params }) {
                         }}
                         variant="classic"
                       >
-                        Withdraw
+                        {txConfirming ? <Spinner /> : "Withdraw"}
                       </Button>
                     ) : (
                       <Button
+                        disabled={withdrawAmount == 0}
                         onClick={async () => {
                           switchChain();
                           const hash = await adapterRegistry[
@@ -530,7 +569,7 @@ export default function YieldPage({ params }) {
                             yieldDetails.chain.chainId,
                             yieldDetails.asset.address,
                             yieldDetails.contractAddress,
-                            withdrawAmount
+                            maxUint256
                           );
 
                           console.log("hash", hash);
@@ -546,18 +585,20 @@ export default function YieldPage({ params }) {
                           console.log("publicClient", publicClient);
                           console.log("waiting for tx receipt");
 
+                          setTxConfirming(true);
+
                           const receipt =
                             await publicClient.waitForTransactionReceipt({
                               hash,
                             });
 
-                          console.log("receipt", receipt);
+                          getWithdrawApproved(withdrawAmount);
 
-                          getWithdrawable();
+                          setTxConfirming(false);
                         }}
                         variant="classic"
                       >
-                        Approve
+                        {txConfirming ? <Spinner /> : "Approve"}
                       </Button>
                     )}
                   </Flex>
