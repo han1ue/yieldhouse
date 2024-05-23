@@ -6,12 +6,13 @@ import "@radix-ui/themes/styles.css";
 import "./globals.css";
 import { Theme } from "@radix-ui/themes";
 import { Container } from "@radix-ui/themes";
-import { Flex, Switch, Text } from "@radix-ui/themes";
+import { Flex, Switch, Text, Popover, Button } from "@radix-ui/themes";
 import { PrivyProvider } from "@privy-io/react-auth";
 import Header from "./components/header";
 import { TestnetContextProvider } from "./components/TestnetContext";
 import { usePathname } from "next/navigation";
 import moment from "moment";
+import { GearIcon } from "@radix-ui/react-icons";
 import { CheckCircledIcon } from "@radix-ui/react-icons";
 import { base, mainnet, sepolia, arbitrum } from "viem/chains";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
@@ -92,7 +93,14 @@ export default function RootLayout({ children }) {
                 <TestnetContextProvider testnet={testnet}>
                   {children}
                 </TestnetContextProvider>
-                <Flex direction="row" justify="between" mx="2" mb="2" mt="8">
+                <Flex
+                  direction="row"
+                  justify="between"
+                  align="center"
+                  mx="2"
+                  mb="2"
+                  mt="8"
+                >
                   <Flex direction="row" justify="center" gapX="2">
                     <CheckCircledIcon size="1" color="green" />
                     <Text size="1">
@@ -101,19 +109,25 @@ export default function RootLayout({ children }) {
                           moment(lastUpdate.timestamp * 1000).fromNow())}
                     </Text>
                   </Flex>
-                  {!pathname.startsWith("/details/") && (
-                    <Flex direction="row" align="center" gapX="1">
-                      <Text size="1" weight="light">
-                        Testnet Environment
-                      </Text>
-
-                      <Switch
-                        size="1"
-                        checked={testnet}
-                        onCheckedChange={() => setTestnet(!testnet)}
-                      />
-                    </Flex>
-                  )}
+                  <Popover.Root>
+                    <Popover.Trigger>
+                      <Button variant="ghost" color="gray">
+                        <GearIcon width="20" height="20" />
+                      </Button>
+                    </Popover.Trigger>
+                    <Popover.Content size="1">
+                      <Flex direction="row" align="center" gapX="1">
+                        <Text size="1" weight="light">
+                          Testnet Environment
+                        </Text>
+                        <Switch
+                          size="1"
+                          checked={testnet}
+                          onCheckedChange={() => setTestnet(!testnet)}
+                        />
+                      </Flex>
+                    </Popover.Content>
+                  </Popover.Root>
                 </Flex>
               </Container>
             </ThemeProvider>
