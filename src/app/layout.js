@@ -93,7 +93,7 @@ export default function RootLayout({ children }) {
                   {children}
                 </TestnetContextProvider>
                 <Flex direction="row" justify="between" mx="2" mb="2" mt="8">
-                  <Flex direction="row" justify="center" gapX="1">
+                  <Flex direction="row" justify="center" gapX="2">
                     <CheckCircledIcon size="1" color="green" />
                     <Text size="1">
                       {"Updated " +
@@ -104,7 +104,7 @@ export default function RootLayout({ children }) {
                   {!pathname.startsWith("/details/") && (
                     <Flex direction="row" align="center" gapX="1">
                       <Text size="1" weight="light">
-                        Testnet Mode
+                        Testnet Environment
                       </Text>
 
                       <Switch
