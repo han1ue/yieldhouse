@@ -9,17 +9,13 @@ import {
   Grid,
   TextField,
   Table,
+  Separator,
+  Code,
   Box,
 } from "@radix-ui/themes";
 import { useState } from "react";
 import Image from "next/image";
-import {
-  FaceIcon,
-  ImageIcon,
-  SunIcon,
-  MagnifyingGlassIcon,
-  TwitterLogoIcon,
-} from "@radix-ui/react-icons";
+import { TwitterLogoIcon, GitHubLogoIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 
 export default function About() {
@@ -46,10 +42,26 @@ export default function About() {
         </Text>
       </Flex>
 
-      <Flex direction="row" justify="center" mt="4" width="full">
-        <Link href="https://twitter.com/yieldhouse">
+      <Flex
+        direction="row"
+        align="center"
+        justify="center"
+        mt="4"
+        gapX="4"
+        width="full"
+      >
+        <Link href="https://x.com/yielddothouse">
           <TwitterLogoIcon width="32" height="32" />
         </Link>
+        <Separator orientation="vertical" />
+        <Link href="https://github.com/jvalentee/yieldhouse">
+          <GitHubLogoIcon width="30" height="30" />
+        </Link>
+      </Flex>
+      <Flex direction="row" gapX="2" align="center" justify="center" mt="9">
+        <Text>Made with</Text>
+        <Code weight="bold">.love()</Code>
+        <Text>by @piggydeveloper</Text>
       </Flex>
     </Flex>
   );
