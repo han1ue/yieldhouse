@@ -223,15 +223,31 @@ export default function AssetTable({
                           height={24}
                         />
                       </Box>
-                      <Flex direction="row" align="start">
-                        <Text size="3" weight="medium" ml="2" trim="start">
-                          {row.asset.name}
-                        </Text>
-                        {row.type == "LP" && (
-                          <Text size="1" color="gray" ml="1">
-                            {"/ " + row.baseAsset}
+                      <Flex
+                        direction={{
+                          initial: "column",
+                          sm: "row",
+                        }}
+                        align="start"
+                      >
+                        <Flex direction="row" align="start">
+                          <Text
+                            size={{
+                              initial: "2",
+                              sm: "3",
+                            }}
+                            weight="medium"
+                            ml="2"
+                            trim="start"
+                          >
+                            {row.asset.name}
                           </Text>
-                        )}
+                          {row.type == "LP" && (
+                            <Text size="1" color="gray" ml="1">
+                              {"/ " + row.baseAsset}
+                            </Text>
+                          )}
+                        </Flex>
                         {row.apy.type == "fixed" && (
                           <Text size="1" color="gray" ml="1">
                             {"(" + formatTime(row.apy.maturityTimestamp) + ")"}
@@ -261,10 +277,12 @@ export default function AssetTable({
                     </Flex>
                   </Table.Cell>
                   <Table.Cell>
-                    {Intl.NumberFormat("en-US", {
-                      notation: "compact",
-                      maximumFractionDigits: 2,
-                    }).format(row.tvl) + " $"}
+                    <Text wrap="nowrap">
+                      {Intl.NumberFormat("en-US", {
+                        notation: "compact",
+                        maximumFractionDigits: 2,
+                      }).format(row.tvl) + " $"}
+                    </Text>
                   </Table.Cell>
                   <Table.Cell>
                     <Flex direction="column" gap="1" display="inline-flex">
@@ -284,7 +302,7 @@ export default function AssetTable({
                     <RiskIndicator risk={row.risk} size={32} textSize={48} />
                   </Table.Cell>
                   <Table.Cell>
-                    <Flex direction="row" width="90%" justify="end">
+                    <Flex direction="row" width="100%" justify="end">
                       <Link href={"/details/" + tableData[index].id}>
                         <Button variant="soft">Deposit</Button>
                       </Link>
