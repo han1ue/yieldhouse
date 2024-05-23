@@ -132,7 +132,7 @@ export default function YieldPage({ params }) {
     if (yieldDetails) {
       getDepositApproved();
     }
-  }, [depositAmount, yieldDetails]);
+  }, [depositAmount, yieldDetails, wallets]);
 
   useEffect(() => {
     console.log("update withdrawAmount", withdrawAmount);
@@ -140,7 +140,7 @@ export default function YieldPage({ params }) {
     if (yieldDetails) {
       getWithdrawApproved();
     }
-  }, [withdrawAmount, yieldDetails]);
+  }, [withdrawAmount, yieldDetails, wallets]);
 
   useEffect(() => {
     async function getProvider() {
