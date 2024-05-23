@@ -2,6 +2,7 @@ import { Flex, Text, Heading, Button } from "@radix-ui/themes";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
 import Link from "next/link";
 import { DarkModeSwitch } from "react-toggle-dark-mode";
+import Image from "next/image";
 
 export default function Header(props) {
   const { connectOrCreateWallet } = usePrivy();
@@ -14,9 +15,14 @@ export default function Header(props) {
 
   return (
     <Flex justify="between" direction="row" mt="2" mb="6" align="center">
-      <Flex direction="row" align="center">
+      <Flex direction="row" align="center" gapX="1">
         <Link href="/">
-          <Heading weight="medium">yield.🏠</Heading>
+          <Flex direction="row" align="center" gapX="1">
+            <Heading trim="end" weight="medium">
+              yield.
+            </Heading>
+            <Image src="/images/logo/icon.png" width="28" height="28" />
+          </Flex>
         </Link>
         <Flex direction="row" mx="5" gapX="2">
           {/* {connected && (
