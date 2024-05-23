@@ -326,7 +326,7 @@ export default function YieldPage({ params }) {
               {selectedTab == "1" && (
                 <Card>
                   <Flex direction="column" gap="4">
-                    <Box>
+                    <Flex direction="column" gap="1">
                       <TextField.Root
                         size="3"
                         type="number"
@@ -347,18 +347,29 @@ export default function YieldPage({ params }) {
                           />
                         </TextField.Slot>
                       </TextField.Root>
-                      <Text size="1" weight="light">
-                        {"Balance: " +
-                          Number(
-                            formatUnits(
-                              depositable,
-                              yieldDetails.asset.decimals
-                            )
-                          ).toFixed(6) +
-                          " " +
-                          yieldDetails.asset.name}
-                      </Text>
-                    </Box>
+                      <Flex direction="row" justify="end" mx="2">
+                        <Text
+                          size="1"
+                          weight="light"
+                          style={{
+                            cursor: "pointer",
+                          }}
+                          onClick={() => {
+                            console.log("click");
+                          }}
+                        >
+                          {"Balance: " +
+                            Number(
+                              formatUnits(
+                                depositable,
+                                yieldDetails.asset.decimals
+                              )
+                            ).toFixed(6) +
+                            " " +
+                            yieldDetails.asset.name}
+                        </Text>
+                      </Flex>
+                    </Flex>
                     <Separator size="4" />
                     {depositApproved ? (
                       <Button
@@ -461,7 +472,7 @@ export default function YieldPage({ params }) {
               {selectedTab == "2" && (
                 <Card>
                   <Flex direction="column" gap="4">
-                    <Box>
+                    <Flex direction="column" gap="1">
                       <TextField.Root
                         size="3"
                         type="number"
@@ -482,18 +493,20 @@ export default function YieldPage({ params }) {
                           />
                         </TextField.Slot>
                       </TextField.Root>
-                      <Text size="1" weight="light">
-                        {"Balance: " +
-                          Number(
-                            formatUnits(
-                              withdrawable,
-                              yieldDetails.asset.decimals
-                            )
-                          ).toFixed(6) +
-                          " " +
-                          yieldDetails.asset.name}
-                      </Text>
-                    </Box>
+                      <Flex direction="row" justify="end" mx="2">
+                        <Text size="1" weight="light">
+                          {"Balance: " +
+                            Number(
+                              formatUnits(
+                                withdrawable,
+                                yieldDetails.asset.decimals
+                              )
+                            ).toFixed(6) +
+                            " " +
+                            yieldDetails.asset.name}
+                        </Text>
+                      </Flex>
+                    </Flex>
                     <Separator size="4" />
                     {withdrawApproved ? (
                       <Button
@@ -618,6 +631,30 @@ export default function YieldPage({ params }) {
                   </Flex>
                 </Card>
               )}
+              <Card>
+                <Flex direction="column" gap="1" mx="2">
+                  <Flex direction="row" justify="between" align="center">
+                    <Text size="2">Available:</Text>
+                    <Text size="3" weight="medium">
+                      {Number(
+                        formatUnits(depositable, yieldDetails.asset.decimals)
+                      ).toFixed(6) +
+                        " " +
+                        yieldDetails.asset.name}
+                    </Text>
+                  </Flex>
+                  <Flex direction="row" justify="between" align="center">
+                    <Text size="2">Deposited:</Text>
+                    <Text size="3" weight="medium">
+                      {Number(
+                        formatUnits(withdrawable, yieldDetails.asset.decimals)
+                      ).toFixed(6) +
+                        " " +
+                        yieldDetails.asset.name}
+                    </Text>
+                  </Flex>
+                </Flex>
+              </Card>
               {yieldDetails.apy.type == "fixed" && (
                 <Card>
                   <Flex direction="row" justify="between" align="center" mx="2">
