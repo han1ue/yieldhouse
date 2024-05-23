@@ -50,11 +50,11 @@ export default function About() {
         gapX="4"
         width="full"
       >
-        <Link href="https://x.com/yielddothouse">
+        <Link target="_blank" href="https://x.com/yielddothouse">
           <TwitterLogoIcon width="32" height="32" />
         </Link>
         <Separator orientation="vertical" />
-        <Link href="https://github.com/jvalentee/yieldhouse">
+        <Link target="_blank" href="https://github.com/jvalentee/yieldhouse">
           <GitHubLogoIcon width="30" height="30" />
         </Link>
       </Flex>
