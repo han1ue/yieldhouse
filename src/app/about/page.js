@@ -59,9 +59,8 @@ export default function About() {
         </Link>
       </Flex>
       <Flex direction="row" gapX="2" align="center" justify="center" mt="9">
-        <Text>Made with</Text>
+        <Text>Made by @piggydeveloper with</Text>
         <Code weight="bold">.love()</Code>
-        <Text>by @piggydeveloper</Text>
       </Flex>
     </Flex>
   );
