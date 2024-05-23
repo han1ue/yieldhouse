@@ -96,7 +96,7 @@ export default function RootLayout({ children }) {
                   <Flex direction="row" justify="center" gapX="1">
                     <CheckCircledIcon size="1" color="green" />
                     <Text size="1">
-                      {"Updated: " +
+                      {"Updated " +
                         (lastUpdate &&
                           moment(lastUpdate.timestamp * 1000).fromNow())}
                     </Text>
