@@ -322,7 +322,7 @@ export async function isWithdrawApproved(
   amount
 ) {
   const marketDetailsEndpoint =
-    "/v1/" + chainId.toString() + "/markets/" + contractAddress;
+    "/v1/" + chainId.toString() + "/markets/" + spender;
   var ptAddress = "";
 
   try {
@@ -374,7 +374,7 @@ export async function approveWithdraw(
   amount
 ) {
   const marketDetailsEndpoint =
-    "/v1/" + chainId.toString() + "/markets/" + contractAddress;
+    "/v1/" + chainId.toString() + "/markets/" + spender;
   var ptAddress = "";
 
   try {

@@ -3,6 +3,7 @@ import {
   createWalletClient,
   createPublicClient,
   custom,
+  formatUnits,
   extractChain,
   erc20Abi,
 } from "viem";
@@ -117,14 +118,26 @@ export async function deposit(privyWallet, chainId, contractAddress, amount) {
     WETH_GATEWAY: addressBook.WETH_GATEWAY,
   });
 
-  console.log("user", privyWallet.address);
-  console.log("amount", amount);
-  console.log("contractAddress", contractAddress);
+  const poolDataProvider = new UiPoolDataProvider({
+    uiPoolDataProviderAddress: addressBook.UI_POOL_DATA_PROVIDER,
+    provider: await privyWallet.getEthersProvider(),
+    chainId: chainId,
+  });
+
+  const reserves = await poolDataProvider.getReservesHumanized({
+    lendingPoolAddressProvider: addressBook.POOL_ADDRESSES_PROVIDER,
+  });
+
+  console.log("reserves", reserves);
+
+  const decimals = reserves.reservesData.find(
+    (reserve) => reserve.underlyingAsset == contractAddress.toLowerCase()
+  ).decimals;
 
   const tx = await pool.supply({
     user: privyWallet.address,
     reserve: contractAddress,
-    amount: amount,
+    amount: formatUnits(amount, decimals),
   });
 
   console.log("tx", tx);
@@ -288,14 +301,26 @@ export async function withdraw(privyWallet, chainId, contractAddress, amount) {
     WETH_GATEWAY: addressBook.WETH_GATEWAY,
   });
 
-  console.log("user", privyWallet.address);
-  console.log("amount", amount);
-  console.log("contractAddress", contractAddress);
+  const poolDataProvider = new UiPoolDataProvider({
+    uiPoolDataProviderAddress: addressBook.UI_POOL_DATA_PROVIDER,
+    provider: await privyWallet.getEthersProvider(),
+    chainId: chainId,
+  });
+
+  const reserves = await poolDataProvider.getReservesHumanized({
+    lendingPoolAddressProvider: addressBook.POOL_ADDRESSES_PROVIDER,
+  });
+
+  console.log("reserves", reserves);
+
+  const decimals = reserves.reservesData.find(
+    (reserve) => reserve.underlyingAsset == contractAddress.toLowerCase()
+  ).decimals;
 
   const tx = await pool.withdraw({
     user: privyWallet.address,
     reserve: contractAddress,
-    amount: amount,
+    amount: formatUnits(amount, decimals),
     aTokenAddress:
       contractAddress == ETH_MOCK_ADDRESS && addressBook.ASSETS.WETH.A_TOKEN,
   });

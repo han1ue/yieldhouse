@@ -75,7 +75,7 @@ export default function YieldPage({ params }) {
     setDepositable(depositable);
   }
 
-  async function getDepositApproved(amount) {
+  async function getDepositApproved() {
     const isDepositApprovedResult = await adapterRegistry[
       yieldDetails.protocol.toLowerCase()
     ].isDepositApproved(
@@ -83,11 +83,13 @@ export default function YieldPage({ params }) {
       yieldDetails.chain.chainId,
       yieldDetails.asset.address,
       yieldDetails.contractAddress,
-      amount
+      depositAmount > 0
+        ? parseUnits(depositAmount, yieldDetails.asset.decimals)
+        : 1
     );
 
     console.log("isDepositApprovedResult", isDepositApprovedResult);
-    console.log("amount", amount);
+    console.log("depositAmount", depositAmount);
     // Get approval status
     setDepositApproved(isDepositApprovedResult);
   }
@@ -106,7 +108,7 @@ export default function YieldPage({ params }) {
     console.log("withdrawable", withdrawable);
   }
 
-  async function getWithdrawApproved(amount) {
+  async function getWithdrawApproved() {
     const isWithdrawApprovedResult = await adapterRegistry[
       yieldDetails.protocol.toLowerCase()
     ].isWithdrawApproved(
@@ -114,7 +116,9 @@ export default function YieldPage({ params }) {
       yieldDetails.chain.chainId,
       yieldDetails.asset.address,
       yieldDetails.contractAddress,
-      amount
+      withdrawAmount > 0
+        ? parseUnits(withdrawAmount, yieldDetails.asset.decimals)
+        : 1
     );
 
     console.log("isWithdrawApprovedResult", isWithdrawApprovedResult);
@@ -126,11 +130,7 @@ export default function YieldPage({ params }) {
     console.log("update depositAmount", depositAmount);
 
     if (yieldDetails) {
-      getDepositApproved(
-        depositAmount > 0
-          ? parseUnits(depositAmount, yieldDetails.asset.decimals)
-          : 1
-      );
+      getDepositApproved();
     }
   }, [depositAmount, yieldDetails]);
 
@@ -138,11 +138,7 @@ export default function YieldPage({ params }) {
     console.log("update withdrawAmount", withdrawAmount);
 
     if (yieldDetails) {
-      getWithdrawApproved(
-        withdrawAmount > 0
-          ? parseUnits(withdrawAmount, yieldDetails.asset.decimals)
-          : 1
-      );
+      getWithdrawApproved();
     }
   }, [withdrawAmount, yieldDetails]);
 
@@ -368,11 +364,10 @@ export default function YieldPage({ params }) {
                       <Button
                         disabled={
                           depositAmount == 0 ||
-                          depositAmount >
-                            formatUnits(
-                              depositable,
-                              yieldDetails.asset.decimals
-                            )
+                          parseUnits(
+                            depositAmount,
+                            yieldDetails.asset.decimals
+                          ) > depositable
                         }
                         onClick={async () => {
                           switchChain();
@@ -451,7 +446,7 @@ export default function YieldPage({ params }) {
                             hash,
                           });
 
-                          getDepositApproved(depositAmount);
+                          await getDepositApproved();
 
                           setTxConfirming(false);
                         }}
@@ -505,11 +500,10 @@ export default function YieldPage({ params }) {
                         disabled={
                           !withdrawApproved ||
                           withdrawAmount == 0 ||
-                          withdrawAmount >
-                            formatUnits(
-                              withdrawable,
-                              yieldDetails.asset.decimals
-                            ) ||
+                          parseUnits(
+                            withdrawAmount,
+                            yieldDetails.asset.decimals
+                          ) > withdrawable ||
                           currentTimestamp < yieldDetails.apy.maturityTimestamp
                         }
                         onClick={async () => {
@@ -592,7 +586,7 @@ export default function YieldPage({ params }) {
                               hash,
                             });
 
-                          getWithdrawApproved(withdrawAmount);
+                          await getWithdrawApproved();
 
                           setTxConfirming(false);
                         }}
