@@ -39,7 +39,7 @@ import {
   createPublicClient,
   maxUint256,
 } from "viem";
-import { de, faker } from "@faker-js/faker";
+import { de, faker, tr } from "@faker-js/faker";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
 import ApyChart from "../../components/apyChart";
 
@@ -330,6 +330,7 @@ export default function YieldPage({ params }) {
                       <TextField.Root
                         size="3"
                         type="number"
+                        value={depositAmount}
                         onChange={(e) => {
                           console.log(e.target.value);
                           setDepositAmount(e.target.value);
@@ -355,7 +356,12 @@ export default function YieldPage({ params }) {
                             cursor: "pointer",
                           }}
                           onClick={() => {
-                            console.log("click");
+                            setDepositAmount(
+                              formatUnits(
+                                depositable,
+                                yieldDetails.asset.decimals
+                              )
+                            );
                           }}
                         >
                           {"Balance: " +
@@ -382,17 +388,26 @@ export default function YieldPage({ params }) {
                         }
                         onClick={async () => {
                           switchChain();
-                          const hash = await adapterRegistry[
-                            yieldDetails.protocol.toLowerCase()
-                          ].deposit(
-                            wallets[0],
-                            yieldDetails.chain.chainId,
-                            yieldDetails.contractAddress,
-                            parseUnits(
-                              depositAmount,
-                              yieldDetails.asset.decimals
-                            )
-                          );
+                          setTxConfirming(true);
+                          var hash;
+
+                          try {
+                            hash = await adapterRegistry[
+                              yieldDetails.protocol.toLowerCase()
+                            ].deposit(
+                              wallets[0],
+                              yieldDetails.chain.chainId,
+                              yieldDetails.contractAddress,
+                              parseUnits(
+                                depositAmount,
+                                yieldDetails.asset.decimals
+                              )
+                            );
+                          } catch (error) {
+                            console.error("deposit error", error);
+                            setTxConfirming(false);
+                            return;
+                          }
 
                           const publicClient = createPublicClient({
                             transport: custom(provider),
@@ -404,7 +419,7 @@ export default function YieldPage({ params }) {
 
                           console.log("publicClient", publicClient);
                           console.log("waiting for tx receipt");
-                          setTxConfirming(true);
+
                           const receipt =
                             await publicClient.waitForTransactionReceipt({
                               hash,
@@ -428,15 +443,23 @@ export default function YieldPage({ params }) {
                         disabled={depositAmount == 0}
                         onClick={async () => {
                           switchChain();
-                          const hash = await adapterRegistry[
-                            yieldDetails.protocol.toLowerCase()
-                          ].approveDeposit(
-                            wallets[0],
-                            yieldDetails.chain.chainId,
-                            yieldDetails.asset.address,
-                            yieldDetails.contractAddress,
-                            maxUint256
-                          );
+                          setTxConfirming(true);
+                          var hash;
+                          try {
+                            hash = await adapterRegistry[
+                              yieldDetails.protocol.toLowerCase()
+                            ].approveDeposit(
+                              wallets[0],
+                              yieldDetails.chain.chainId,
+                              yieldDetails.asset.address,
+                              yieldDetails.contractAddress,
+                              maxUint256
+                            );
+                          } catch (error) {
+                            console.error("approveDeposit error", error);
+                            setTxConfirming(false);
+                            return;
+                          }
 
                           console.log("hash", hash);
                           const publicClient = createPublicClient({
@@ -450,8 +473,6 @@ export default function YieldPage({ params }) {
                           console.log("publicClient", publicClient);
 
                           console.log("waiting for tx receipt");
-
-                          setTxConfirming(true);
 
                           await publicClient.waitForTransactionReceipt({
                             hash,
@@ -476,6 +497,7 @@ export default function YieldPage({ params }) {
                       <TextField.Root
                         size="3"
                         type="number"
+                        value={withdrawAmount}
                         onChange={(e) => {
                           console.log(e.target.value);
                           setWithdrawAmount(e.target.value);
@@ -494,7 +516,21 @@ export default function YieldPage({ params }) {
                         </TextField.Slot>
                       </TextField.Root>
                       <Flex direction="row" justify="end" mx="2">
-                        <Text size="1" weight="light">
+                        <Text
+                          size="1"
+                          weight="light"
+                          style={{
+                            cursor: "pointer",
+                          }}
+                          onClick={() => {
+                            setWithdrawAmount(
+                              formatUnits(
+                                withdrawable,
+                                yieldDetails.asset.decimals
+                              )
+                            );
+                          }}
+                        >
                           {"Balance: " +
                             Number(
                               formatUnits(
@@ -521,17 +557,26 @@ export default function YieldPage({ params }) {
                         }
                         onClick={async () => {
                           switchChain();
-                          const hash = await adapterRegistry[
-                            yieldDetails.protocol.toLowerCase()
-                          ].withdraw(
-                            wallets[0],
-                            yieldDetails.chain.chainId,
-                            yieldDetails.contractAddress,
-                            parseUnits(
-                              withdrawAmount,
-                              yieldDetails.asset.decimals
-                            )
-                          );
+                          setTxConfirming(true);
+                          var hash;
+
+                          try {
+                            hash = await adapterRegistry[
+                              yieldDetails.protocol.toLowerCase()
+                            ].withdraw(
+                              wallets[0],
+                              yieldDetails.chain.chainId,
+                              yieldDetails.contractAddress,
+                              parseUnits(
+                                withdrawAmount,
+                                yieldDetails.asset.decimals
+                              )
+                            );
+                          } catch (error) {
+                            console.error("withdraw error", error);
+                            setTxConfirming(false);
+                            return;
+                          }
                           console.log("hash", hash);
                           const publicClient = createPublicClient({
                             transport: custom(provider),
@@ -543,8 +588,6 @@ export default function YieldPage({ params }) {
 
                           console.log("publicClient", publicClient);
                           console.log("waiting for tx receipt");
-
-                          setTxConfirming(true);
 
                           const receipt =
                             await publicClient.waitForTransactionReceipt({
@@ -569,15 +612,23 @@ export default function YieldPage({ params }) {
                         disabled={withdrawAmount == 0}
                         onClick={async () => {
                           switchChain();
-                          const hash = await adapterRegistry[
-                            yieldDetails.protocol.toLowerCase()
-                          ].approveWithdraw(
-                            wallets[0],
-                            yieldDetails.chain.chainId,
-                            yieldDetails.asset.address,
-                            yieldDetails.contractAddress,
-                            maxUint256
-                          );
+                          setTxConfirming(true);
+                          var hash;
+                          try {
+                            hash = await adapterRegistry[
+                              yieldDetails.protocol.toLowerCase()
+                            ].approveWithdraw(
+                              wallets[0],
+                              yieldDetails.chain.chainId,
+                              yieldDetails.asset.address,
+                              yieldDetails.contractAddress,
+                              maxUint256
+                            );
+                          } catch (error) {
+                            console.error("approveWithdraw error", error);
+                            setTxConfirming(false);
+                            return;
+                          }
 
                           console.log("hash", hash);
 
@@ -591,8 +642,6 @@ export default function YieldPage({ params }) {
 
                           console.log("publicClient", publicClient);
                           console.log("waiting for tx receipt");
-
-                          setTxConfirming(true);
 
                           const receipt =
                             await publicClient.waitForTransactionReceipt({
