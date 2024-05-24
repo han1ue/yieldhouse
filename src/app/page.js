@@ -51,7 +51,14 @@ export default function Home() {
     <>
       <Flex direction="column" gap="6">
         <Flex direction="row" justify="between">
-          <Flex direction="column" gap="2" width="300px">
+          <Flex
+            direction="column"
+            gap="2"
+            width={{
+              initial: "260px",
+              xs: "300px",
+            }}
+          >
             <TextField.Root
               onChange={(e) => setSearchQuery(e.target.value)}
               variant="surface"
