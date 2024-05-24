@@ -670,7 +670,7 @@ export default function YieldPage({ params }) {
               <Card>
                 <Flex direction="column" gap="1" mx="2">
                   <Flex direction="row" justify="between" align="center">
-                    <Text size="2">Available:</Text>
+                    <Text size="2">In Wallet:</Text>
                     <Text size="3" weight="medium">
                       {Number(
                         formatUnits(depositable, yieldDetails.asset.decimals)
