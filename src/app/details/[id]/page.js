@@ -371,7 +371,8 @@ export default function YieldPage({ params }) {
                           parseUnits(
                             depositAmount,
                             yieldDetails.asset.decimals
-                          ) > depositable
+                          ) > depositable ||
+                          !wallets[0]
                         }
                         onClick={async () => {
                           switchChain();
@@ -427,7 +428,7 @@ export default function YieldPage({ params }) {
                       </Button>
                     ) : (
                       <Button
-                        disabled={depositAmount == 0}
+                        disabled={depositAmount == 0 || !wallets[0]}
                         onClick={async () => {
                           switchChain();
                           setTxConfirming(true);
@@ -540,7 +541,9 @@ export default function YieldPage({ params }) {
                             withdrawAmount,
                             yieldDetails.asset.decimals
                           ) > withdrawable ||
-                          currentTimestamp < yieldDetails.apy.maturityTimestamp
+                          currentTimestamp <
+                            yieldDetails.apy.maturityTimestamp ||
+                          !wallets[0]
                         }
                         onClick={async () => {
                           switchChain();
@@ -596,7 +599,7 @@ export default function YieldPage({ params }) {
                       </Button>
                     ) : (
                       <Button
-                        disabled={withdrawAmount == 0}
+                        disabled={withdrawAmount == 0 || !wallets[0]}
                         onClick={async () => {
                           switchChain();
                           setTxConfirming(true);
