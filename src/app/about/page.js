@@ -54,7 +54,7 @@ export default function About() {
           <TwitterLogoIcon width="32" height="32" />
         </Link>
         <Separator orientation="vertical" />
-        <Link target="_blank" href="https://github.com/jvalentee/yieldhouse">
+        <Link target="_blank" href="https://github.com/han1ue/yieldhouse">
           <GitHubLogoIcon width="30" height="30" />
         </Link>
       </Flex>
