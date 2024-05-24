@@ -16,6 +16,7 @@ import Image from "next/image";
 import { ThickArrowUpIcon, ThickArrowDownIcon } from "@radix-ui/react-icons";
 import "react-circular-progressbar/dist/styles.css";
 import Link from "next/link";
+import { useMediaQuery } from "react-responsive";
 import { useTestnetContext } from "../components/TestnetContext";
 import RiskIndicator from "./riskIndicator";
 
@@ -29,6 +30,8 @@ export default function AssetTable({
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
   const testnet = useTestnetContext();
+  const isMobile = useMediaQuery({ maxWidth: 640 }); // Adjust the max width as needed
+  const isSmallMobile = useMediaQuery({ maxWidth: 480 }); // Adjust the max width as needed
   const [sortConfig, setSortConfig] = useState({
     key: null,
     direction: null,
@@ -182,17 +185,21 @@ export default function AssetTable({
                   <Box>{renderSortIcons("apy")}</Box>
                 </Flex>
               </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>
-                <Flex direction="row" align="center" gap="1">
-                  <Box>TVL</Box>
-                  <Box>{renderSortIcons("tvl")}</Box>
-                </Flex>
-              </Table.ColumnHeaderCell>
-              <Table.ColumnHeaderCell>
-                <Flex mt="1">
-                  <Text size="2">Type</Text>
-                </Flex>
-              </Table.ColumnHeaderCell>
+              {!isSmallMobile && (
+                <Table.ColumnHeaderCell>
+                  <Flex direction="row" align="center" gap="1">
+                    <Box>TVL</Box>
+                    <Box>{renderSortIcons("tvl")}</Box>
+                  </Flex>
+                </Table.ColumnHeaderCell>
+              )}
+              {!isMobile && (
+                <Table.ColumnHeaderCell>
+                  <Flex mt="1">
+                    <Text size="2">Type</Text>
+                  </Flex>
+                </Table.ColumnHeaderCell>
+              )}
               <Table.ColumnHeaderCell>
                 <Flex mt="1">
                   <Text size="2">Risk</Text>
@@ -259,6 +266,7 @@ export default function AssetTable({
                       {row.protocol + " • " + row.chain.name}{" "}
                     </Text>
                   </Table.RowHeaderCell>
+
                   <Table.Cell>
                     <Flex direction="column" gap="1">
                       <Text size="2">
@@ -276,28 +284,34 @@ export default function AssetTable({
                       </Flex>
                     </Flex>
                   </Table.Cell>
-                  <Table.Cell>
-                    <Text wrap="nowrap">
-                      {Intl.NumberFormat("en-US", {
-                        notation: "compact",
-                        maximumFractionDigits: 2,
-                      }).format(row.tvl) + " $"}
-                    </Text>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Flex direction="column" gap="1" display="inline-flex">
-                      {row.type.map((type, i) => (
-                        <Badge
-                          key={i}
-                          variant="soft"
-                          color="iris"
-                          radius="large"
-                        >
-                          {type}
-                        </Badge>
-                      ))}
-                    </Flex>
-                  </Table.Cell>
+
+                  {!isSmallMobile && (
+                    <Table.Cell>
+                      <Text wrap="nowrap">
+                        {Intl.NumberFormat("en-US", {
+                          notation: "compact",
+                          maximumFractionDigits: 2,
+                        }).format(row.tvl) + " $"}
+                      </Text>
+                    </Table.Cell>
+                  )}
+                  {!isMobile && (
+                    <Table.Cell>
+                      <Flex direction="column" gap="1" display="inline-flex">
+                        {row.type.map((type, i) => (
+                          <Badge
+                            key={i}
+                            variant="soft"
+                            color="iris"
+                            radius="large"
+                          >
+                            {type}
+                          </Badge>
+                        ))}
+                      </Flex>
+                    </Table.Cell>
+                  )}
+
                   <Table.Cell>
                     <RiskIndicator risk={row.risk} size={32} textSize={48} />
                   </Table.Cell>
