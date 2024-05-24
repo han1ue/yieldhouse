@@ -228,38 +228,25 @@ export default function YieldPage({ params }) {
       {yieldDetails ? (
         <Flex direction="column">
           <Flex direction="row" justify="center" align="center" gap="6">
-            <Flex direction="row" justify="center" align="center" gap="3">
-              <Image
-                src={
-                  "/images/assets/" +
-                  yieldDetails.asset.name.toLowerCase() +
-                  ".svg"
-                }
-                width={25}
-                height={25}
-              />
-              <Separator orientation="vertical" size="1" />
-              <Image
-                src={
-                  "/images/protocols/" +
-                  yieldDetails.protocol.toLowerCase() +
-                  ".svg"
-                }
-                width={120}
-                height={80}
-              />
-            </Flex>
-            <Separator size="3" orientation="vertical" />
-            <Flex direction="column" gap="1" align="center">
-              <Text size="2" weight="medium">
-                Risk Level
-              </Text>
-              <RiskIndicator
-                risk={yieldDetails.risk ? yieldDetails.risk : 1}
-                size={48}
-                textSize={36}
-              />
-            </Flex>
+            <Image
+              src={
+                "/images/assets/" +
+                yieldDetails.asset.name.toLowerCase() +
+                ".svg"
+              }
+              width={40}
+              height={40}
+            />
+            <Separator orientation="vertical" size="1" />
+            <Image
+              src={
+                "/images/protocols/" +
+                yieldDetails.protocol.toLowerCase() +
+                ".svg"
+              }
+              width={240}
+              height={120}
+            />
           </Flex>
           <Flex
             direction={{
@@ -706,14 +693,20 @@ export default function YieldPage({ params }) {
               </Card>
               {yieldDetails.apy.type == "fixed" && (
                 <Card>
-                  <Flex direction="row" justify="between" align="center" mx="2">
-                    <Text size="2">Time until maturity:</Text>
-                    <Text size="3" weight="medium">
-                      {moment(yieldDetails.apy.maturityTimestamp * 1000).diff(
-                        moment(),
-                        "days"
-                      ) + " days"}
-                    </Text>
+                  <Flex direction="column" gap="1" mx="2">
+                    <Text size="1">Maturity</Text>
+                    <Flex direction="row" justify="between" align="center">
+                      <Text size="3" weight="medium">
+                        {"in " +
+                          moment(
+                            yieldDetails.apy.maturityTimestamp * 1000
+                          ).diff(moment(), "days") +
+                          " days"}
+                      </Text>
+                      <Text size="3" weight="medium">
+                        {maturityDate.toDateString()}
+                      </Text>
+                    </Flex>
                   </Flex>
                 </Card>
               )}
@@ -750,14 +743,13 @@ export default function YieldPage({ params }) {
                           }).format(yieldDetails.tvl) + " $"}
                         </Text>
                       </Flex>
-                      {yieldDetails.apy.type == "fixed" && (
-                        <Flex direction="column" gap="1">
-                          <Text size="1">Maturity</Text>
-                          <Text size="2" weight="medium">
-                            {maturityDate.toLocaleDateString("en-GB")}
-                          </Text>
-                        </Flex>
-                      )}
+                      <Flex direction="column" gap="1">
+                        <Text size="1">Risk Level</Text>
+                        <Text size="2" weight="medium">
+                          {(yieldDetails.risk ? yieldDetails.risk : 1) +
+                            " / 10"}
+                        </Text>
+                      </Flex>
                     </Flex>
                   </Card>
                 </Box>
