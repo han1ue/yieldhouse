@@ -317,7 +317,12 @@ export default function AssetTable({
                   </Table.Cell>
                   <Table.Cell>
                     <Flex direction="row" width="100%" justify="end">
-                      <Link href={"/details/" + tableData[index].id}>
+                      <Link
+                        href={
+                          "/details/" +
+                          tableData[(currentPage - 1) * itemsPerPage + index].id
+                        }
+                      >
                         <Button variant="soft">Deposit</Button>
                       </Link>
                     </Flex>
