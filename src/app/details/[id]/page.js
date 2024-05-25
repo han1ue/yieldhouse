@@ -788,7 +788,9 @@ export default function YieldPage({ params }) {
                     ))}
                   </Flex>
                 </Flex>
-                <ApyChart historyData={yieldDetails.apy.history} />
+                {yieldDetails.apy.history && (
+                  <ApyChart historyData={yieldDetails.apy.history} />
+                )}
               </Flex>
             </Flex>
           </Flex>

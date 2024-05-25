@@ -30,7 +30,7 @@
     "react-dom": "^18",
     "react-responsive": "^10.0.0",
     "react-toggle-dark-mode": "^1.1.1",
-    "viem": "^2.10.5"
+    "viem": "^2.12.1"
   },
   "devDependencies": {
     "@faker-js/faker": "^8.4.1",
