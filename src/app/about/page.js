@@ -32,7 +32,8 @@ export default function About() {
             ● Use{" "}
             <a
               href="https://rabby.io/"
-              style={{ color: "blue", fontWeight: "bold" }}
+              style={{ textDecoration: "underline" }}
+              target="_blank"
             >
               Rabby Wallet
             </a>{" "}
@@ -42,8 +43,9 @@ export default function About() {
           <Text>
             ● Use a{" "}
             <a
+              target="_blank"
               href="https://www.coinbase.com/learn/crypto-basics/what-is-a-hardware-wallet"
-              style={{ color: "blue", fontWeight: "bold" }}
+              style={{ textDecoration: "underline" }}
             >
               hardware wallet
             </a>{" "}
