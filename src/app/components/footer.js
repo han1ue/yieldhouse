@@ -110,14 +110,14 @@ export default function Footer(props) {
               <Box width="40px">
                 <TextField.Root
                   size="1"
-                  placeholder="10"
+                  placeholder="8"
                   type="number"
                   defaultValue={props.settings.itemsPerPage}
                   onChange={(e) =>
                     props.setSettings({
                       testnet: props.settings.testnet,
                       itemsPerPage: parseInt(
-                        e.target.value ? e.target.value : 10
+                        e.target.value ? e.target.value : 8
                       ),
                     })
                   }

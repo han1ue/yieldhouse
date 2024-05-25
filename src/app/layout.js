@@ -22,7 +22,7 @@ export default function RootLayout({ children }) {
   const pathname = usePathname();
   const [settings, setSettings] = useState({
     testnet: false,
-    itemsPerPage: 10,
+    itemsPerPage: 8,
   });
   const [appearance, setAppearance] = useState();
 
