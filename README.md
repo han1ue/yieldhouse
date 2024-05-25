@@ -1,5 +1,5 @@
 ## Integrated DeFi Protocols
-AAVE, Pendle
+AAVE, Pendle, Maker
 
 ## About yield.house
 yield.house is a platform that helps you find the yield opportunities. We provide a curated list of all the best yield opportunities in the market.
