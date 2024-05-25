@@ -26,7 +26,7 @@ export default function About() {
         <Text>AAVE, Pendle, Maker</Text>
       </Flex>
       <Flex direction="column" gapY="2">
-        <Heading size="3">Best Pratices</Heading>
+        <Heading size="3">Best Practices</Heading>
         <Flex direction="column">
           <Text>
             ● Use{" "}
