@@ -127,7 +127,7 @@ export default function Footer(props) {
 
             <Flex direction="row" align="center" justify="between" gapX="2">
               <Text size="1" weight="light">
-                Testnet
+                Sepolia Testnet
               </Text>
               <Switch
                 size="1"

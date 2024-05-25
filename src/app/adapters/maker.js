@@ -2,7 +2,6 @@ import {
   createWalletClient,
   createPublicClient,
   custom,
-  extractChain,
   encodeFunctionData,
   erc20Abi,
 } from "viem";
