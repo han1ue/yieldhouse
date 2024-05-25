@@ -6,6 +6,7 @@ import {
   IconButton,
   Grid,
   TextField,
+  Tooltip,
   Table,
   Badge,
   Box,
@@ -180,14 +181,18 @@ export default function AssetTable({
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell>
                 <Flex direction="row" align="center" gap="1">
-                  <Text size="2">APY</Text>
+                  <Tooltip content="Annual Percentage Yield">
+                    <Text size="2">APY</Text>
+                  </Tooltip>
                   <Box>{renderSortIcons("apy")}</Box>
                 </Flex>
               </Table.ColumnHeaderCell>
               {!isSmallMobile && (
                 <Table.ColumnHeaderCell>
                   <Flex direction="row" align="center" gap="1">
-                    <Box>TVL</Box>
+                    <Tooltip content="Total Value Locked">
+                      <Box>TVL</Box>
+                    </Tooltip>
                     <Box>{renderSortIcons("tvl")}</Box>
                   </Flex>
                 </Table.ColumnHeaderCell>
@@ -201,7 +206,9 @@ export default function AssetTable({
               )}
               <Table.ColumnHeaderCell>
                 <Flex mt="1">
-                  <Text size="2">Risk</Text>
+                  <Tooltip content="Risk framework coming soon.">
+                    <Text size="2">Risk</Text>
+                  </Tooltip>
                 </Flex>
               </Table.ColumnHeaderCell>
               <Table.ColumnHeaderCell></Table.ColumnHeaderCell>
