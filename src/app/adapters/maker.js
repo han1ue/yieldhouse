@@ -7,7 +7,6 @@ import {
   erc20Abi,
 } from "viem";
 import { mainnet } from "viem/chains";
-import { useWallets } from "@privy-io/react-auth";
 
 const DSR_MANAGER_ADDRESS = "0x373238337Bfe1146fb49989fc222523f83081dDb";
 const DSR_ABI = [
