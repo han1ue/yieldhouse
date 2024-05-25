@@ -32,8 +32,8 @@ export default function AssetTable({
   const isMobile = useMediaQuery({ maxWidth: 640 }); // Adjust the max width as needed
   const isSmallMobile = useMediaQuery({ maxWidth: 480 }); // Adjust the max width as needed
   const [sortConfig, setSortConfig] = useState({
-    key: null,
-    direction: null,
+    key: "tvl",
+    direction: "descending",
   });
 
   // Fetch data when testnet context changes
