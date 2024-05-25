@@ -27,7 +27,7 @@ import {
 } from "@radix-ui/react-icons";
 import RiskIndicator from "../../components/riskIndicator";
 import { adapterRegistry } from "../../adapters/adapterRegistry";
-import { useTestnetContext } from "../../components/TestnetContext";
+import { useSettingsContext } from "../../components/SettingsContext";
 import React from "react";
 import moment from "moment";
 import {
@@ -39,12 +39,12 @@ import {
   createPublicClient,
   maxUint256,
 } from "viem";
-import { de, faker, tr } from "@faker-js/faker";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
 import ApyChart from "../../components/apyChart";
 
 export default function YieldPage({ params }) {
-  const testnet = useTestnetContext();
+  const settings = useSettingsContext();
+
   const { ready, wallets } = useWallets();
   const [provider, setProvider] = useState();
   const [selectedTab, setSelectedTab] = useState("1");
@@ -171,7 +171,7 @@ export default function YieldPage({ params }) {
   useEffect(() => {
     async function fetchData() {
       try {
-        const yieldsUrl = testnet
+        const yieldsUrl = settings.testnet
           ? "https://raw.githubusercontent.com/jvalentee/yieldhouse-data/main/data/yieldsTestnet.json"
           : "https://raw.githubusercontent.com/jvalentee/yieldhouse-data/main/data/yields.json";
 
@@ -192,7 +192,7 @@ export default function YieldPage({ params }) {
     }
 
     fetchData();
-  }, [testnet, params.id]);
+  }, [settings, params.id]);
 
   async function switchChain() {
     console.log("yieldDetails", yieldDetails);

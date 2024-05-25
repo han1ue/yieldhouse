@@ -9,17 +9,17 @@ import {
   Box,
 } from "@radix-ui/themes";
 import { useMediaQuery } from "react-responsive";
-import { useTestnetContext } from "./TestnetContext";
+import { useSettingsContext } from "./SettingsContext";
 
 import Image from "next/image";
 
 export default function ChainSelectionGrid(props) {
   const isMobile = useMediaQuery({ maxWidth: 640 }); // Adjust the max width as needed
-  const testnet = useTestnetContext();
+  const settings = useSettingsContext();
 
   return (
     <>
-      {!testnet && (
+      {!settings.testnet && (
         <Grid columns="3" gap="2">
           <Box align="center">
             <IconButton

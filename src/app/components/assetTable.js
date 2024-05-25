@@ -17,7 +17,7 @@ import { ThickArrowUpIcon, ThickArrowDownIcon } from "@radix-ui/react-icons";
 import "react-circular-progressbar/dist/styles.css";
 import Link from "next/link";
 import { useMediaQuery } from "react-responsive";
-import { useTestnetContext } from "../components/TestnetContext";
+import { useSettingsContext } from "./SettingsContext";
 import RiskIndicator from "./riskIndicator";
 
 export default function AssetTable({
@@ -28,8 +28,7 @@ export default function AssetTable({
   const [yieldsData, setYieldsData] = useState([]);
   const [tableData, setTableData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-  const testnet = useTestnetContext();
+  const settings = useSettingsContext();
   const isMobile = useMediaQuery({ maxWidth: 640 }); // Adjust the max width as needed
   const isSmallMobile = useMediaQuery({ maxWidth: 480 }); // Adjust the max width as needed
   const [sortConfig, setSortConfig] = useState({
@@ -41,7 +40,7 @@ export default function AssetTable({
   useEffect(() => {
     async function fetchData() {
       const response = await fetch(
-        testnet
+        settings.testnet
           ? "https://raw.githubusercontent.com/jvalentee/yieldhouse-data/main/data/yieldsTestnet.json"
           : "https://raw.githubusercontent.com/jvalentee/yieldhouse-data/main/data/yields.json"
       );
@@ -50,7 +49,7 @@ export default function AssetTable({
     }
 
     fetchData();
-  }, [testnet]);
+  }, [settings]);
 
   useEffect(() => {
     // Filter data based on selected chains, asset types, and search query
@@ -212,8 +211,8 @@ export default function AssetTable({
           <Table.Body>
             {tableData
               .slice(
-                (currentPage - 1) * itemsPerPage,
-                currentPage * itemsPerPage
+                (currentPage - 1) * settings.itemsPerPage,
+                currentPage * settings.itemsPerPage
               )
               .map((row, index) => (
                 <Table.Row key={index} align="center">
@@ -320,7 +319,9 @@ export default function AssetTable({
                       <Link
                         href={
                           "/details/" +
-                          tableData[(currentPage - 1) * itemsPerPage + index].id
+                          tableData[
+                            (currentPage - 1) * settings.itemsPerPage + index
+                          ].id
                         }
                       >
                         <Button variant="soft">Deposit</Button>
@@ -333,7 +334,7 @@ export default function AssetTable({
         </Table.Root>
       </Box>
       <Pagination
-        count={Math.ceil(tableData.length / itemsPerPage)}
+        count={Math.ceil(tableData.length / settings.itemsPerPage)}
         onChange={handlePageChange}
         variant="outlined"
         shape="rounded"

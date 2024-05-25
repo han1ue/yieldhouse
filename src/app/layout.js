@@ -7,24 +7,24 @@ import "@radix-ui/themes/styles.css";
 import "./globals.css";
 import { Theme } from "@radix-ui/themes";
 import { Container } from "@radix-ui/themes";
-import { Flex, Switch, Text, Popover, Button } from "@radix-ui/themes";
 import { PrivyProvider } from "@privy-io/react-auth";
 import Header from "./components/header";
-import { TestnetContextProvider } from "./components/TestnetContext";
+import { SettingsContextProvider } from "./components/SettingsContext";
 import { usePathname } from "next/navigation";
-import moment from "moment";
-import { GearIcon } from "@radix-ui/react-icons";
-import { CheckCircledIcon } from "@radix-ui/react-icons";
+
 import { base, mainnet, sepolia, arbitrum } from "viem/chains";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
+import Footer from "./components/footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({ children }) {
   const pathname = usePathname();
-  const [testnet, setTestnet] = useState(false);
+  const [settings, setSettings] = useState({
+    testnet: false,
+    itemsPerPage: 10,
+  });
   const [appearance, setAppearance] = useState();
-  const [lastUpdate, setLastUpdate] = useState();
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -91,46 +91,11 @@ export default function RootLayout({ children }) {
             <ThemeProvider theme={muiTheme}>
               <Container maxWidth="640px" mx="2">
                 <Header appearance={appearance} setAppearance={setAppearance} />
-                <TestnetContextProvider testnet={testnet}>
+                <SettingsContextProvider settings={settings}>
                   {children}
                   <Analytics />
-                </TestnetContextProvider>
-                <Flex
-                  direction="row"
-                  justify="between"
-                  align="center"
-                  mx="2"
-                  mb="2"
-                  mt="8"
-                >
-                  <Flex direction="row" justify="center" gapX="2">
-                    <CheckCircledIcon size="1" color="green" />
-                    <Text size="1">
-                      {"Updated " +
-                        (lastUpdate &&
-                          moment(lastUpdate.timestamp * 1000).fromNow())}
-                    </Text>
-                  </Flex>
-                  <Popover.Root>
-                    <Popover.Trigger>
-                      <Button variant="ghost" color="gray">
-                        <GearIcon width="20" height="20" />
-                      </Button>
-                    </Popover.Trigger>
-                    <Popover.Content size="1">
-                      <Flex direction="row" align="center" gapX="1">
-                        <Text size="1" weight="light">
-                          Testnet Environment
-                        </Text>
-                        <Switch
-                          size="1"
-                          checked={testnet}
-                          onCheckedChange={() => setTestnet(!testnet)}
-                        />
-                      </Flex>
-                    </Popover.Content>
-                  </Popover.Root>
-                </Flex>
+                </SettingsContextProvider>
+                <Footer setSettings={setSettings} settings={settings} />
               </Container>
             </ThemeProvider>
           </Theme>
