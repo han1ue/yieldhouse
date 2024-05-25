@@ -53,8 +53,8 @@ export default function About() {
           <Text>● Never share your seed phrase with anyone.</Text>
           <Text>
             ● When transacting in Ethereum mainnet, beware of the high gas fees.
-            Sometimes it's better to wait for the network to be less congested
-            and then make the transaction.
+            Sometimes it&apos;s better to wait for the network to be less
+            congested and then make the transaction.
           </Text>
         </Flex>
       </Flex>
