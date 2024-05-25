@@ -37,8 +37,8 @@ export default function About() {
             >
               Rabby Wallet
             </a>{" "}
-            to interact with yield.house. This guarantees you will be warned
-            before signing malicious transactions.
+            to interact with web3 applications. This ensures you receive
+            warnings before signing any potentially malicious transactions.
           </Text>
           <Text>
             ● Use a{" "}
@@ -56,7 +56,7 @@ export default function About() {
           <Text>
             ● When transacting in Ethereum mainnet, beware of the high gas fees.
             Sometimes it&apos;s better to wait for the network to be less
-            congested and then make the transaction.
+            congested before making the transaction.
           </Text>
         </Flex>
       </Flex>
@@ -73,7 +73,7 @@ export default function About() {
           to create a wallet through your social network account.
         </Text>
         <Text>
-          yield.house has a 0% fee policy, we don&apos;t charge any fee for
+          yield.house has a 0% fee policy; we don&apos;t charge any fee for
           using the platform.
         </Text>
       </Flex>
