@@ -23,14 +23,15 @@ export default function About() {
     <Flex direction="column" gap="4">
       <Flex direction="column">
         <Heading size="3">Integrated DeFi Protocols</Heading>
-        <Text>AAVE, Pendle</Text>
+        <Text>AAVE, Pendle, Maker</Text>
       </Flex>
       <Flex direction="column">
         <Heading size="3">About yield.house</Heading>
         <Text>
-          yield.house is a platform that helps you find the yield opportunities.
-          We provide a curated list of all the best yield opportunities in the
-          market.
+          yield.house is a platform that helps you find the best yield
+          opportunities in crypto. We provide a curated list of the top yields
+          across multiple, trusted decentralized finance protocols, allowing you
+          to deposit and withdraw funds directly through the platform.
         </Text>
         <Text>
           The platform is built on top of the Privy protocol, which allows you
@@ -38,7 +39,7 @@ export default function About() {
         </Text>
         <Text>
           yield.house has a 0% fee policy, we don&apos;t charge any fee for
-          using our platform.
+          using the platform.
         </Text>
       </Flex>
 
