@@ -28,7 +28,11 @@ export default function Header(props) {
               <Heading trim="end" weight="medium">
                 yield.
               </Heading>
-              <Image src="/images/logo/icon.png" width="28" height="28" />
+              <Image
+                src="/images/yield_house_logo/icon.png"
+                width="28"
+                height="28"
+              />
             </Flex>
           </Link>
         </Box>
