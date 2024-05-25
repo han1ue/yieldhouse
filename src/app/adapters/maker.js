@@ -3,6 +3,7 @@ import {
   createPublicClient,
   custom,
   extractChain,
+  encodeFunctionData,
   erc20Abi,
 } from "viem";
 import { mainnet } from "viem/chains";
@@ -70,7 +71,6 @@ export async function isDepositApproved(
   amount
 ) {
   const publicClient = getPublicClient(await privyWallet.getEthereumProvider());
-
   const allowance = await publicClient.readContract({
     address: token,
     abi: erc20Abi,

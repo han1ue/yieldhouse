@@ -5,17 +5,24 @@ import {
   Popover,
   Button,
   TextField,
+  Separator,
   Box,
 } from "@radix-ui/themes";
 import moment from "moment";
+import { formatUnits, createPublicClient, custom } from "viem";
+import { useWallets } from "@privy-io/react-auth";
+import { mainnet } from "viem/chains";
 import { useState, useEffect } from "react";
 import { GearIcon } from "@radix-ui/react-icons";
 import { CheckCircledIcon } from "@radix-ui/react-icons";
 
 export default function Footer(props) {
   const [lastUpdate, setLastUpdate] = useState();
+  const [mainnetGasPrice, setMainnetGasPrice] = useState();
+  const { ready, wallets } = useWallets();
 
   useEffect(() => {
+    // Get the last update time
     async function fetchLastUpdate() {
       try {
         const response = await fetch(
@@ -38,14 +45,55 @@ export default function Footer(props) {
     fetchLastUpdate();
   }, []);
 
+  useEffect(() => {
+    console.log("fetchGasPrice:");
+    async function fetchGasPrice() {
+      const provider = await wallets[0].getEthereumProvider();
+      console.log("Provider:", provider);
+      const publicClient = createPublicClient({
+        chain: mainnet,
+        transport: custom(provider),
+      });
+
+      const { gasPrice } = await publicClient.estimateFeesPerGas({
+        type: "legacy",
+      });
+
+      console.log("Gas Price:", gasPrice);
+
+      setMainnetGasPrice(gasPrice);
+    }
+
+    // GEt the gas price
+    if (wallets && wallets.length > 0) {
+      console.log("Fetching gas price...");
+      fetchGasPrice();
+    }
+  }, [ready, wallets]);
+
   return (
     <Flex direction="row" justify="between" align="center" mx="2" mb="2" mt="8">
-      <Flex direction="row" justify="center" gapX="2">
-        <CheckCircledIcon size="1" color="green" />
-        <Text size="1">
-          {"Updated " +
-            (lastUpdate && moment(lastUpdate.timestamp * 1000).fromNow())}
-        </Text>
+      <Flex direction="row" justify="center" gapX="4">
+        <Flex direction="row" justify="center" gapX="2">
+          <CheckCircledIcon size="1" color="green" />
+          <Text size="1">
+            {"Updated " +
+              (lastUpdate && moment(lastUpdate.timestamp * 1000).fromNow())}
+          </Text>
+        </Flex>
+        {mainnetGasPrice && (
+          <>
+            <Separator orientation="vertical" />
+            <Flex direction="row" justify="center" gapX="2">
+              <Text size="1" weight="light">
+                ⛽
+              </Text>
+              <Text size="1">
+                {Number(formatUnits(mainnetGasPrice, 9)).toFixed(2) + " Gwei"}
+              </Text>
+            </Flex>
+          </>
+        )}
       </Flex>
       <Popover.Root>
         <Popover.Trigger>
