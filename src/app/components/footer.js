@@ -9,9 +9,9 @@ import {
   Box,
 } from "@radix-ui/themes";
 import moment from "moment";
-import { formatUnits, createPublicClient, custom } from "viem";
+import { formatUnits, createPublicClient, custom, extractChain } from "viem";
 import { useWallets } from "@privy-io/react-auth";
-import { mainnet } from "viem/chains";
+import { base, mainnet, sepolia, arbitrum } from "viem/chains";
 import { useState, useEffect } from "react";
 import { GearIcon } from "@radix-ui/react-icons";
 import { CheckCircledIcon } from "@radix-ui/react-icons";
@@ -19,6 +19,7 @@ import { CheckCircledIcon } from "@radix-ui/react-icons";
 export default function Footer(props) {
   const [lastUpdate, setLastUpdate] = useState();
   const [mainnetGasPrice, setMainnetGasPrice] = useState();
+  const [connectedChainName, setConnectedChainName] = useState();
   const { ready, wallets } = useWallets();
 
   useEffect(() => {
@@ -64,16 +65,32 @@ export default function Footer(props) {
       setMainnetGasPrice(gasPrice);
     }
 
+    async function fetchConnectedChainName() {
+      const provider = await wallets[0].getEthereumProvider();
+      const publicClient = createPublicClient({
+        chain: mainnet,
+        transport: custom(provider),
+      });
+      const chainId = await publicClient.getChainId();
+      const chain = extractChain({
+        chains: [mainnet, base, arbitrum, sepolia],
+        id: chainId,
+      });
+
+      setConnectedChainName(chain ? chain.name : "Unsupported Chain");
+    }
+
     // GEt the gas price
     if (wallets && wallets.length > 0) {
       console.log("Fetching gas price...");
       fetchGasPrice();
+      fetchConnectedChainName();
     }
   }, [ready, wallets]);
 
   return (
     <Flex direction="row" justify="between" align="center" mx="2" mb="2" mt="8">
-      <Flex direction="row" justify="center" gapX="4">
+      <Flex direction="row" justify="center" align="center" gapX="4">
         <Flex direction="row" justify="center" gapX="2">
           <CheckCircledIcon size="1" color="green" />
           <Text size="1">
@@ -84,13 +101,18 @@ export default function Footer(props) {
         {mainnetGasPrice && (
           <>
             <Separator orientation="vertical" />
-            <Flex direction="row" justify="center" gapX="2">
+            <Flex direction="row" align="center" justify="center" gapX="2">
               <Text size="1" weight="light">
                 ⛽
               </Text>
-              <Text size="1">
-                {Number(formatUnits(mainnetGasPrice, 9)).toFixed(2) + " Gwei"}
-              </Text>
+              <Flex direction="column" gapY="0">
+                <Text size="1">
+                  {Number(formatUnits(mainnetGasPrice, 9)).toFixed(2) + " Gwei"}
+                </Text>
+                <Text size="1" weight="light">
+                  {connectedChainName}
+                </Text>
+              </Flex>
             </Flex>
           </>
         )}
