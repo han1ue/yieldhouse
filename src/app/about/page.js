@@ -20,12 +20,45 @@ import Link from "next/link";
 
 export default function About() {
   return (
-    <Flex direction="column" gap="4">
-      <Flex direction="column">
+    <Flex direction="column" gap="6">
+      <Flex direction="column" gapY="2">
         <Heading size="3">Integrated DeFi Protocols</Heading>
         <Text>AAVE, Pendle, Maker</Text>
       </Flex>
-      <Flex direction="column">
+      <Flex direction="column" gapY="2">
+        <Heading size="3">Best Pratices</Heading>
+        <Flex direction="column">
+          <Text>
+            ● Use{" "}
+            <a
+              href="https://rabby.io/"
+              style={{ color: "blue", fontWeight: "bold" }}
+            >
+              Rabby Wallet
+            </a>{" "}
+            to interact with yield.house. This guarantees you will be warned
+            before signing malicious transactions.
+          </Text>
+          <Text>
+            ● Use a{" "}
+            <a
+              href="https://www.coinbase.com/learn/crypto-basics/what-is-a-hardware-wallet"
+              style={{ color: "blue", fontWeight: "bold" }}
+            >
+              hardware wallet
+            </a>{" "}
+            to store your funds. This gives an extra layer of security since
+            your funds are stored offline.
+          </Text>
+          <Text>● Never share your seed phrase with anyone.</Text>
+          <Text>
+            ● When transacting in Ethereum mainnet, beware of the high gas fees.
+            Sometimes it's better to wait for the network to be less congested
+            and then make the transaction.
+          </Text>
+        </Flex>
+      </Flex>
+      <Flex direction="column" gapY="2">
         <Heading size="3">About yield.house</Heading>
         <Text>
           yield.house is a platform that helps you find the best yield
