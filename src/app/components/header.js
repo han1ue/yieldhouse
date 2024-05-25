@@ -1,4 +1,4 @@
-import { Flex, Text, Heading, Button } from "@radix-ui/themes";
+import { Flex, Text, Heading, Button, Box } from "@radix-ui/themes";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
 import Link from "next/link";
 import { DarkModeSwitch } from "react-toggle-dark-mode";
@@ -15,16 +15,24 @@ export default function Header(props) {
 
   return (
     <Flex justify="between" direction="row" mt="2" mb="6" align="center">
-      <Flex direction="row" align="center" gapX="1">
-        <Link href="/">
-          <Flex direction="row" align="center" gapX="1">
-            <Heading trim="end" weight="medium">
-              yield.
-            </Heading>
-            <Image src="/images/logo/icon.png" width="28" height="28" />
-          </Flex>
-        </Link>
-        <Flex direction="row" mx="5" gapX="2">
+      <Flex direction="row" align="center" gapX="6">
+        <Box
+          gapX="1"
+          display={{
+            initial: "none",
+            xs: "inline",
+          }}
+        >
+          <Link href="/">
+            <Flex direction="row" align="center">
+              <Heading trim="end" weight="medium">
+                yield.
+              </Heading>
+              <Image src="/images/logo/icon.png" width="28" height="28" />
+            </Flex>
+          </Link>
+        </Box>
+        <Flex direction="row" gapX="2">
           {/* {connected && (
             <Link href="/dashboard">
               <Button size="1" variant="soft">
@@ -34,13 +42,13 @@ export default function Header(props) {
           )} */}
 
           <Link href="/">
-            <Button size="1" variant="soft">
+            <Button size="2" variant="soft">
               Yields
             </Button>
           </Link>
 
           <Link href="/about">
-            <Button size="1" variant="soft">
+            <Button size="2" variant="soft">
               About
             </Button>
           </Link>
