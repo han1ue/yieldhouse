@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, use } from "react";
 import {
   Flex,
   Text,
@@ -90,8 +90,15 @@ export default function AssetTable({
     setCurrentPage(value);
   };
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [selectedAssetTypes]);
+
   function sortData(data, key, direction) {
     setSortConfig({ key, direction });
+
+    // Set page to 1 when sorting
+    setCurrentPage(1);
 
     console.log("Sorting by", key, direction);
 
@@ -342,6 +349,7 @@ export default function AssetTable({
       </Box>
       <Pagination
         count={Math.ceil(tableData.length / settings.itemsPerPage)}
+        page={currentPage}
         onChange={handlePageChange}
         variant="outlined"
         shape="rounded"
