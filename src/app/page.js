@@ -69,7 +69,7 @@ export default function Home() {
                 <MagnifyingGlassIcon height="16" width="16" />
               </TextField.Slot>
             </TextField.Root>
-            <Grid columns="4" gap="1">
+            <Grid columns="3" gap="1">
               <Button
                 size="1"
                 color="gray"
@@ -93,14 +93,6 @@ export default function Home() {
               <Button
                 size="1"
                 color="gray"
-                variant={selectedAssetTypes.includes("LP") ? "solid" : "soft"}
-                onClick={() => handleClickAssetType("LP")}
-              >
-                LP
-              </Button>
-              <Button
-                size="1"
-                color="gray"
                 variant={selectedAssetTypes.includes("LST") ? "solid" : "soft"}
                 onClick={() => handleClickAssetType("LST")}
               >
@@ -113,6 +105,16 @@ export default function Home() {
                 onClick={() => handleClickAssetType("LRT")}
               >
                 LRT
+              </Button>
+              <Button
+                size="1"
+                color="gray"
+                variant={
+                  selectedAssetTypes.includes("Governance") ? "solid" : "soft"
+                }
+                onClick={() => handleClickAssetType("Governance")}
+              >
+                Governance
               </Button>
             </Grid>
           </Flex>
