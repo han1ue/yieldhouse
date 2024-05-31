@@ -178,7 +178,7 @@ export default function AssetTable({
   return (
     <Flex direction="column" gap="6" align="center">
       <Box width="100%">
-        <Table.Root variant="ghost" size="1">
+        <Table.Root size="2">
           <Table.Header>
             <Table.Row>
               <Table.ColumnHeaderCell>

@@ -1,20 +1,6 @@
 "use client";
 
-import {
-  Flex,
-  Text,
-  Button,
-  Heading,
-  IconButton,
-  Grid,
-  TextField,
-  Table,
-  Separator,
-  Code,
-  Box,
-} from "@radix-ui/themes";
-import { useState } from "react";
-import Image from "next/image";
+import { Flex, Text, Heading, Separator, Code } from "@radix-ui/themes";
 import { TwitterLogoIcon, GitHubLogoIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 
@@ -23,7 +9,7 @@ export default function About() {
     <Flex direction="column" gap="6">
       <Flex direction="column" gapY="2">
         <Heading size="3">Integrated DeFi Protocols</Heading>
-        <Text>AAVE, Pendle, Maker</Text>
+        <Text>AAVE, Pendle, Maker, Lido</Text>
       </Flex>
       <Flex direction="column" gapY="2">
         <Heading size="3">Best Practices</Heading>
@@ -37,8 +23,8 @@ export default function About() {
             >
               Rabby Wallet
             </a>{" "}
-            to interact with web3 applications. This ensures you receive
-            warnings before signing any potentially malicious transactions.
+            to interact with web3 applications. This ensures you receive a
+            warning before signing any potentially malicious transactions.
           </Text>
           <Text>
             ● Use a{" "}
@@ -67,10 +53,6 @@ export default function About() {
           opportunities in crypto. We provide a curated list of the top yields
           across multiple, trusted decentralized finance protocols, allowing you
           to deposit and withdraw funds directly through the platform.
-        </Text>
-        <Text>
-          The platform is built on top of the Privy protocol, which allows you
-          to create a wallet through your social network account.
         </Text>
         <Text>
           yield.house has a 0% fee policy; we don&apos;t charge any fee for

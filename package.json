@@ -13,6 +13,7 @@
     "@bgd-labs/aave-address-book": "^2.27.0",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
+    "@lidofinance/lido-ethereum-sdk": "^3.2.1",
     "@mui/material": "^5.15.18",
     "@privy-io/react-auth": "^1.64.0",
     "@radix-ui/react-icons": "^1.3.0",

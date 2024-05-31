@@ -17,7 +17,7 @@ export default function Header(props) {
     <Flex justify="between" direction="row" mt="2" mb="6" align="center">
       <Flex direction="row" align="center" gapX="6">
         <Box
-          gapX="1"
+          gapx="1"
           display={{
             initial: "none",
             xs: "inline",
@@ -25,7 +25,7 @@ export default function Header(props) {
         >
           <Link href="/">
             <Flex direction="row" align="center">
-              <Heading trim="end" weight="medium">
+              <Heading weight="medium" mt="1">
                 yield.
               </Heading>
               <Image

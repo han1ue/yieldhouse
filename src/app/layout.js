@@ -10,8 +10,6 @@ import { Container } from "@radix-ui/themes";
 import { PrivyProvider } from "@privy-io/react-auth";
 import Header from "./components/header";
 import { SettingsContextProvider } from "./components/SettingsContext";
-import { usePathname } from "next/navigation";
-
 import { base, mainnet, sepolia, arbitrum } from "viem/chains";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Footer from "./components/footer";
@@ -19,7 +17,6 @@ import Footer from "./components/footer";
 const inter = Inter({ subsets: ["latin"] });
 
 export default function RootLayout({ children }) {
-  const pathname = usePathname();
   const [settings, setSettings] = useState({
     testnet: false,
     itemsPerPage: 8,
@@ -34,27 +31,6 @@ export default function RootLayout({ children }) {
         setAppearance(storedAppearance);
       }
     }
-
-    async function fetchLastUpdate() {
-      try {
-        const response = await fetch(
-          "https://raw.githubusercontent.com/jvalentee/yieldhouse-data/main/data/lastUpdate.json"
-        );
-        if (response.ok) {
-          const data = await response.json();
-          setLastUpdate(data);
-        } else {
-          console.error(
-            "Failed to fetch lastUpdate.json:",
-            response.statusText
-          );
-        }
-      } catch (error) {
-        console.error("Error fetching lastUpdate.json:", error);
-      }
-    }
-
-    fetchLastUpdate();
   }, []);
 
   useEffect(() => {

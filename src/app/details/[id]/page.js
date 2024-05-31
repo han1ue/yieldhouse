@@ -50,6 +50,9 @@ export default function YieldPage({ params }) {
   const [selectedTab, setSelectedTab] = useState("1");
   const [initialChainSwitch, setInitialChainSwitch] = useState(false);
   const [depositable, setDepositable] = useState("0");
+  const [unlockable, setUnlockable] = useState("0");
+  const [unlockAmount, setUnlockAmount] = useState("0");
+  const [unlockRequests, setUnlockRequests] = useState([]);
   const [depositAmount, setDepositAmount] = useState("0");
   const [depositApproved, setDepositApproved] = useState(false);
   const [withdrawable, setWithdrawable] = useState("0");
@@ -92,6 +95,29 @@ export default function YieldPage({ params }) {
     console.log("depositAmount", depositAmount);
     // Get approval status
     setDepositApproved(isDepositApprovedResult);
+  }
+
+  async function getUnlockable() {
+    console.log("getUnlockable");
+    const unlockable = await adapterRegistry[
+      yieldDetails.protocol.toLowerCase()
+    ].unlockable(
+      wallets[0],
+      yieldDetails.chain.chainId,
+      yieldDetails.contractAddress
+    );
+    setUnlockable(unlockable);
+
+    console.log("unlockable", unlockable);
+  }
+
+  async function getUnlockRequests() {
+    const unlockRequests = await adapterRegistry[
+      yieldDetails.protocol.toLowerCase()
+    ].unlockRequests(wallets[0], yieldDetails.chain.chainId);
+    setUnlockRequests(unlockRequests);
+
+    console.log("getUnlockRequests", unlockRequests);
   }
 
   async function getWithdrawable() {
@@ -159,6 +185,12 @@ export default function YieldPage({ params }) {
 
       // Get withdrawable amount
       getWithdrawable();
+
+      // Get unlockable amount
+      if (yieldDetails.unlockDuration) {
+        getUnlockable();
+        getUnlockRequests();
+      }
 
       // Chain switch
       if (!initialChainSwitch) {
@@ -267,7 +299,9 @@ export default function YieldPage({ params }) {
               <RadioCards.Root
                 defaultValue="1"
                 size="1"
-                columns={claimAvailable ? "3" : "2"}
+                columns={
+                  claimAvailable || yieldDetails.unlockDuration ? "3" : "2"
+                }
                 onValueChange={(value) => {
                   console.log(value);
                   setSelectedTab(value);
@@ -276,11 +310,16 @@ export default function YieldPage({ params }) {
                 <RadioCards.Item value="1">
                   <Text weight="bold">Deposit</Text>
                 </RadioCards.Item>
-                <RadioCards.Item value="2">
+                {yieldDetails.unlockDuration && (
+                  <RadioCards.Item value="2">
+                    <Text weight="bold">Unlock</Text>
+                  </RadioCards.Item>
+                )}
+                <RadioCards.Item value="3">
                   <Text weight="bold">Withdraw</Text>
                 </RadioCards.Item>
                 {claimAvailable && (
-                  <RadioCards.Item value="3" disabled={!claimAvailable}>
+                  <RadioCards.Item value="4" disabled={!claimAvailable}>
                     <Text weight="bold">Claim</Text>
                   </RadioCards.Item>
                 )}
@@ -479,6 +518,185 @@ export default function YieldPage({ params }) {
                 </Card>
               )}
               {selectedTab == "2" && (
+                <Flex direction="column" gap="4">
+                  <Card>
+                    <Flex direction="column" gap="4">
+                      <Heading size="2">Unlock requests</Heading>
+                      {unlockRequests.length > 0 ? (
+                        <Table.Root variant="surface">
+                          <Table.Body>
+                            {unlockRequests.map((unlockRequest, i) => (
+                              <Table.Row key={i}>
+                                <Table.Cell>
+                                  <Flex
+                                    direction="row"
+                                    gapX="1"
+                                    display="inline-flex"
+                                  >
+                                    <Text size="1">
+                                      {Number(
+                                        formatUnits(
+                                          unlockRequest.amount,
+                                          yieldDetails.asset.decimals
+                                        )
+                                      ).toFixed(6)}
+                                    </Text>
+                                    <Image
+                                      src={
+                                        "/images/assets/" +
+                                        yieldDetails.asset.name.toLowerCase() +
+                                        ".svg"
+                                      }
+                                      width={15}
+                                      height={15}
+                                    />
+                                  </Flex>
+                                </Table.Cell>
+                                <Table.Cell>
+                                  <Text size="1">
+                                    {moment(
+                                      unlockRequest.timestamp * 1000
+                                    ).fromNow()}
+                                  </Text>
+                                </Table.Cell>
+                                <Table.Cell>
+                                  <Text size="1">
+                                    {unlockRequest.status
+                                      .charAt(0)
+                                      .toUpperCase() +
+                                      unlockRequest.status.slice(1)}
+                                  </Text>
+                                </Table.Cell>
+                              </Table.Row>
+                            ))}
+                          </Table.Body>
+                        </Table.Root>
+                      ) : (
+                        <Flex direction="column" align="center">
+                          <Text size="1">No unlock requests</Text>
+                        </Flex>
+                      )}
+                    </Flex>
+                  </Card>
+                  <Card>
+                    <Flex direction="column" gap="4">
+                      <Heading size="2">Create unlock request</Heading>
+                      <Flex direction="column" gap="1">
+                        <TextField.Root
+                          size="3"
+                          type="number"
+                          value={unlockAmount}
+                          onChange={(e) => {
+                            console.log(e.target.value);
+                            setUnlockAmount(e.target.value);
+                          }}
+                        >
+                          <TextField.Slot>
+                            <Image
+                              src={
+                                "/images/assets/" +
+                                yieldDetails.asset.name.toLowerCase() +
+                                ".svg"
+                              }
+                              width={20}
+                              height={20}
+                            />
+                          </TextField.Slot>
+                        </TextField.Root>
+                        <Flex direction="row" justify="end" mx="2">
+                          <Text
+                            size="1"
+                            weight="light"
+                            style={{
+                              cursor: "pointer",
+                            }}
+                            onClick={() => {
+                              setUnlockAmount(
+                                formatUnits(
+                                  unlockable,
+                                  yieldDetails.asset.decimals
+                                )
+                              );
+                            }}
+                          >
+                            {"Balance: " +
+                              Number(
+                                formatUnits(
+                                  unlockable,
+                                  yieldDetails.asset.decimals
+                                )
+                              ).toFixed(6) +
+                              " " +
+                              yieldDetails.asset.name}
+                          </Text>
+                        </Flex>
+                      </Flex>
+                      <Separator size="4" />
+                      <Button
+                        disabled={
+                          unlockAmount == 0 ||
+                          parseUnits(
+                            unlockAmount,
+                            yieldDetails.asset.decimals
+                          ) > unlockable ||
+                          !wallets[0]
+                        }
+                        onClick={async () => {
+                          switchChain();
+                          setTxConfirming(true);
+                          var hash;
+
+                          try {
+                            hash = await adapterRegistry[
+                              yieldDetails.protocol.toLowerCase()
+                            ].createUnlockRequest(
+                              wallets[0],
+                              yieldDetails.chain.chainId,
+                              parseUnits(
+                                unlockAmount,
+                                yieldDetails.asset.decimals
+                              )
+                            );
+                          } catch (error) {
+                            console.error("unlock error", error);
+                            setTxConfirming(false);
+                            return;
+                          }
+
+                          const publicClient = createPublicClient({
+                            transport: custom(provider),
+                            chain: extractChain({
+                              chains: [mainnet, base, arbitrum, sepolia],
+                              id: yieldDetails.chain.chainId,
+                            }),
+                          });
+
+                          console.log("publicClient", publicClient);
+                          console.log("waiting for tx receipt");
+
+                          const receipt =
+                            await publicClient.waitForTransactionReceipt({
+                              hash,
+                            });
+
+                          setTxConfirming(false);
+
+                          console.log("receipt", receipt);
+
+                          console.log("deposit-tx done");
+
+                          getUnlockable();
+                          getUnlockRequests();
+                        }}
+                        variant="classic"
+                      >
+                        {txConfirming ? <Spinner /> : "Unlock"}
+                      </Button>
+                    </Flex>
+                  </Card>
+                </Flex>
+              )}
+              {selectedTab == "3" && (
                 <Card>
                   <Flex direction="column" gap="4">
                     <Flex direction="column" gap="1">
@@ -535,15 +753,16 @@ export default function YieldPage({ params }) {
                     {withdrawApproved ? (
                       <Button
                         disabled={
+                          !wallets[0] ||
                           !withdrawApproved ||
                           withdrawAmount == 0 ||
                           parseUnits(
                             withdrawAmount,
                             yieldDetails.asset.decimals
                           ) > withdrawable ||
-                          currentTimestamp <
-                            yieldDetails.apy.maturityTimestamp ||
-                          !wallets[0]
+                          (yieldDetails.apy.maturityTimestamp &&
+                            currentTimestamp <
+                              yieldDetails.apy.maturityTimestamp)
                         }
                         onClick={async () => {
                           switchChain();
@@ -650,7 +869,7 @@ export default function YieldPage({ params }) {
                   </Flex>
                 </Card>
               )}
-              {selectedTab == "3" && (
+              {selectedTab == "4" && (
                 <Card>
                   <Flex direction="column" gap="4">
                     <Text size="2">Claimable Assets</Text>
@@ -670,6 +889,7 @@ export default function YieldPage({ params }) {
                   </Flex>
                 </Card>
               )}
+
               <Card>
                 <Flex direction="column" gap="1" mx="2">
                   <Flex direction="row" justify="between" align="center">
@@ -682,11 +902,17 @@ export default function YieldPage({ params }) {
                         yieldDetails.asset.name}
                     </Text>
                   </Flex>
+
                   <Flex direction="row" justify="between" align="center">
                     <Text size="2">Deposited:</Text>
                     <Text size="3" weight="medium">
                       {Number(
-                        formatUnits(withdrawable, yieldDetails.asset.decimals)
+                        formatUnits(
+                          yieldDetails.unlockDuration
+                            ? unlockable
+                            : withdrawable,
+                          yieldDetails.asset.decimals
+                        )
                       ).toFixed(6) +
                         " " +
                         yieldDetails.asset.name}
