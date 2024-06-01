@@ -29,6 +29,8 @@ export default function RootLayout({ children }) {
       if (storedAppearance) {
         console.log("storedAppearance", storedAppearance);
         setAppearance(storedAppearance);
+      } else if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+        setAppearance("dark");
       }
     }
   }, []);
